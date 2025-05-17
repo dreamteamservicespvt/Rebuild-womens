@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +13,29 @@ import {
 import { toast } from "@/hooks/use-toast";
 import UpiQRCode from "@/components/UpiQRCode";
 import { useFirebase } from "@/contexts/FirebaseContext";
-import { Instagram, Home, Phone } from "lucide-react";
+import { Instagram, Home, Phone, CheckCircle2, ArrowRight } from "lucide-react";
+
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -20,
+    transition: { duration: 0.4 }
+  }
+};
+
+// Progress indicator steps
+const steps = [
+  { name: "Your Info", number: 1 },
+  { name: "Payment", number: 2 },
+  { name: "Complete", number: 3 }
+];
 
 const JoinForm = () => {
   const { addBooking, getPriceConfig } = useFirebase();
@@ -26,7 +49,8 @@ const JoinForm = () => {
     session: "",
     message: "",
     price: 0,
-    paid: false
+    paid: false,
+    screenshotUrl: ""    // <— add
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -36,6 +60,27 @@ const JoinForm = () => {
 
   const handleSelectChange = (value: string, field: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleScreenshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+    setLoading(true);
+    const file = e.target.files[0];
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "rebuild womens");
+    try {
+      const res = await fetch("https://api.cloudinary.com/v1_1/dvmrhs2ek/upload", {
+        method: "POST", body: data
+      });
+      const json = await res.json();
+      setFormData(prev => ({ ...prev, screenshotUrl: json.secure_url }));
+      toast({ title: "Uploaded!", description: "Screenshot saved." });
+    } catch {
+      toast({ variant: "destructive", title: "Upload failed" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,6 +120,7 @@ const JoinForm = () => {
         preferredSlot: formData.session,
         paymentStatus: 'completed',
         price: formData.price,
+        screenshotUrl: formData.screenshotUrl   // <— include
       });
       
       setStep(3);
@@ -113,11 +159,65 @@ const JoinForm = () => {
     window.open("https://www.instagram.com/rebuildfitness/", "_blank");
   };
 
-  const renderStep = () => {
-    switch(step) {
-      case 1:
-        return (
-          <div className="animate-on-scroll">
+  // Progress indicator
+  const ProgressBar = () => (
+    <div className="mb-8">
+      <div className="flex items-center justify-between">
+        {steps.map((s, i) => (
+          <div key={s.name} className="flex flex-col items-center">
+            <div 
+              className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
+                step >= s.number 
+                  ? 'bg-rebuild-purple text-white border-rebuild-purple' 
+                  : 'bg-white text-gray-400 border-gray-200'
+              }`}
+            >
+              {step > s.number ? (
+                <CheckCircle2 className="h-5 w-5" />
+              ) : (
+                <span>{s.number}</span>
+              )}
+            </div>
+            <span className={`text-xs mt-1.5 ${
+              step >= s.number ? 'text-rebuild-purple font-medium' : 'text-gray-500'
+            }`}>
+              {s.name}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="relative mt-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="h-1 w-full bg-gray-200 rounded"></div>
+        </div>
+        <div className="relative flex justify-between">
+          <div 
+            className="h-1 bg-rebuild-purple rounded transition-all duration-700 ease-in-out" 
+            style={{ 
+              width: step === 1 ? '0%' : step === 2 ? '50%' : '100%',
+              position: 'absolute',
+              left: 0,
+              top: 0
+            }}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="max-w-md mx-auto bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-xl border border-white/50">
+      <ProgressBar />
+      
+      <AnimatePresence mode="wait">
+        {step === 1 && (
+          <motion.div
+            key="step1"
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
             <h3 className="text-2xl font-bold text-center mb-6 text-rebuild-purple">
               Join Our Women-only Weight Loss Program
             </h3>
@@ -128,7 +228,7 @@ const JoinForm = () => {
                 onChange={handleChange}
                 placeholder="Full Name"
                 required
-                className="bg-white/70 backdrop-blur-sm"
+                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
               />
               
               <Input
@@ -138,7 +238,7 @@ const JoinForm = () => {
                 placeholder="Phone Number"
                 required
                 type="tel"
-                className="bg-white/70 backdrop-blur-sm"
+                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
               />
               
               <Input
@@ -147,7 +247,7 @@ const JoinForm = () => {
                 onChange={handleChange}
                 placeholder="Email Address"
                 type="email"
-                className="bg-white/70 backdrop-blur-sm"
+                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
               />
               
               <Input
@@ -159,7 +259,7 @@ const JoinForm = () => {
                 required
                 min="18"
                 max="100"
-                className="bg-white/70 backdrop-blur-sm"
+                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
               />
               
               <Select 
@@ -167,14 +267,17 @@ const JoinForm = () => {
                 onValueChange={(value) => handleSelectChange(value, "session")}
                 required
               >
-                <SelectTrigger className="bg-white/70 backdrop-blur-sm">
+                <SelectTrigger className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple">
                   <SelectValue placeholder="Select Preferred Session" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="9am-10am">9 AM–10 AM (Morning)</SelectItem>
-                  <SelectItem value="10am-11am">10 AM–11 AM (Morning)</SelectItem>
-                  <SelectItem value="4pm-5pm">4 PM–5 PM (Evening)</SelectItem>
-                  <SelectItem value="5pm-6pm">5 PM–6 PM (Evening)</SelectItem>
+                  {/* Morning slots */}
+                  <SelectItem value="morning-1">8:00 AM - 9:00 AM (Morning)</SelectItem>
+                  <SelectItem value="morning-2">9:00 AM - 10:10 AM (Morning)</SelectItem>
+                  
+                  {/* Evening slots */}
+                  <SelectItem value="evening-1">3:00 PM - 4:00 PM (Evening)</SelectItem>
+                  <SelectItem value="evening-2">4:00 PM - 5:00 PM (Evening)</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -183,23 +286,33 @@ const JoinForm = () => {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Any specific requirements or questions? (Optional)"
-                className="bg-white/70 backdrop-blur-sm"
+                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
               />
               
               <Button 
                 type="submit" 
-                className="w-full bg-rebuild-purple hover:bg-rebuild-purple/90" 
+                className="w-full bg-rebuild-purple hover:bg-rebuild-purple/90 group" 
                 disabled={loading}
               >
-                {loading ? "Processing..." : "Submit & Proceed to Payment"}
+                {loading ? "Processing..." : (
+                  <>
+                    Submit & Proceed to Payment
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
               </Button>
             </form>
-          </div>
-        );
+          </motion.div>
+        )}
         
-      case 2:
-        return (
-          <div className="animate-on-scroll">
+        {step === 2 && (
+          <motion.div
+            key="step2"
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
             <h3 className="text-2xl font-bold mb-6 text-rebuild-purple text-center">Complete Your Payment</h3>
             <p className="mb-6 text-center">Scan the QR code to pay and secure your spot:</p>
             
@@ -209,66 +322,107 @@ const JoinForm = () => {
                 onComplete={handlePaymentComplete} 
               />
             </div>
-          </div>
-        );
-        
-      case 3:
-        return (
-          <div className="animate-fade-in bg-gradient-to-b from-purple-50 to-white p-6 rounded-xl shadow-sm border border-purple-100">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rebuild-purple/10 mb-4">
-                <svg className="w-8 h-8 text-rebuild-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              
-              <h3 className="text-2xl font-bold mb-4 text-rebuild-purple">Congratulations!</h3>
-              <p className="mb-2 text-gray-700">You've successfully joined our weight loss program.</p>
-              <p className="mb-8 text-gray-700">Our team will contact you soon with more details about your first session.</p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  onClick={scrollToTop}
-                  className="bg-rebuild-purple hover:bg-rebuild-purple/90 transition-all w-full flex gap-2 items-center justify-center"
-                >
-                  <Home size={18} /> Return to Home
-                </Button>
-                
-                <Button
-                  onClick={openWhatsApp}
-                  variant="outline" 
-                  className="border-rebuild-purple text-rebuild-purple hover:bg-rebuild-purple/10 w-full flex gap-2 items-center justify-center"
-                >
-                  <Phone size={18} /> Contact Support
-                </Button>
-                
-                <Button
-                  onClick={openInstagram}
-                  variant="outline"
-                  className="border-rebuild-pink text-rebuild-pink hover:bg-rebuild-pink/10 w-full flex gap-2 items-center justify-center"
-                >
-                  <Instagram size={18} /> Follow Us
-                </Button>
-              </div>
-              
-              <div className="mt-10">
-                <Button
-                  onClick={() => setStep(1)}
-                  variant="ghost" 
-                  className="text-gray-500 hover:text-rebuild-purple"
-                >
-                  Register Another Person
-                </Button>
-              </div>
-            </div>
-          </div>
-        );
-    }
-  };
 
-  return (
-    <div className="max-w-md mx-auto bg-white/40 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-xl border border-white/50">
-      {renderStep()}
+            {/* Upload screenshot + share */}
+            <div className="space-y-4 mb-6">
+              <label className="block text-center font-medium">Upload Payment Screenshot</label>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={handleScreenshotUpload}
+                className="block mx-auto"
+              />
+              {formData.screenshotUrl && (
+                <img src={formData.screenshotUrl} alt="Screenshot" className="mx-auto w-40 h-auto rounded-md" />
+              )}
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  const wa = `https://wa.me/919618361999?text=${encodeURIComponent(
+                    "Here is my payment screenshot: " + formData.screenshotUrl
+                  )}`;
+                  window.open(wa, "_blank");
+                }}
+              >
+                Share on WhatsApp
+              </Button>
+            </div>
+          </motion.div>
+        )}
+        
+        {step === 3 && (
+          <motion.div
+            key="step3"
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-white/50"
+          >
+            {/* Success Icon */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 120, damping: 8, delay: 0.2 }}
+              className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-rebuild-purple to-rebuild-pink shadow-lg mb-6"
+            >
+              <CheckCircle2 className="h-10 w-10 text-white" />
+            </motion.div>
+
+            {/* Headline */}
+            <h3 className="text-center text-3xl font-bold text-rebuild-purple mb-4">
+              Congratulations!
+            </h3>
+
+            {/* Messages */}
+            <div className="space-y-2 text-center text-gray-700 mb-8">
+              <p>You've successfully joined our weight loss program.</p>
+              <p>Our team will contact you soon with more details about your first session.</p>
+            </div>
+
+            {/* Action Buttons - Vertical Stack on Mobile, Horizontal on Desktop */}
+            <div className="flex flex-col space-y-3 mb-6">
+              <Button
+                onClick={scrollToTop}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-rebuild-purple to-rebuild-pink hover:opacity-90 transition-all py-6"
+              >
+                <Home size={18} />
+                <span>Return to Home</span>
+              </Button>
+              
+              <Button
+                onClick={openWhatsApp}
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 border-rebuild-purple text-rebuild-purple hover:bg-rebuild-purple/5 py-6"
+              >
+                <Phone size={18} />
+                <span>Contact Support</span>
+              </Button>
+              
+              <Button
+                onClick={openInstagram}
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 border-rebuild-pink text-rebuild-pink hover:bg-rebuild-pink/5 py-6"
+              >
+                <Instagram size={18} />
+                <span>Follow Us</span>
+              </Button>
+            </div>
+
+            {/* Register another link */}
+            <div className="text-center">
+              <Button
+                variant="ghost"
+                onClick={() => setStep(1)}
+                className="text-gray-500 hover:text-rebuild-purple"
+              >
+                Register Another Person
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

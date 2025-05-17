@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import SectionTitle from "@/components/SectionTitle";
 import { CheckCircle } from "lucide-react";
@@ -7,6 +6,7 @@ import { useFirebase } from "@/contexts/FirebaseContext";
 const PricingSection = () => {
   const { getPriceConfig } = useFirebase();
   const [price, setPrice] = useState(4000);
+  const [originalPrice, setOriginalPrice] = useState(4000); // Store original price
   const [offer, setOffer] = useState<'none' | '50off' | '25off'>('none');
   const [loading, setLoading] = useState(true);
 
@@ -15,6 +15,7 @@ const PricingSection = () => {
       try {
         const config = await getPriceConfig();
         setPrice(config.discountedPrice);
+        setOriginalPrice(config.basePrice);
         setOffer(config.currentOffer);
         setLoading(false);
       } catch (error) {
@@ -29,14 +30,18 @@ const PricingSection = () => {
   const renderOffer = () => {
     if (offer === '50off') {
       return (
-        <div className="absolute -top-5 right-4 bg-gradient-to-r from-rebuild-purple to-rebuild-pink text-white px-4 py-1.5 rounded-full text-sm font-semibold animate-pulse shadow-lg">
-          50% OFF
+        <div className="absolute -top-6 right-0 left-0 flex justify-center z-10">
+          <div className="bg-gradient-to-r from-rebuild-purple to-rebuild-pink text-white px-6 py-2 rounded-full text-base font-bold shadow-lg transform rotate-0 scale-110">
+            50% OFF
+          </div>
         </div>
       );
     } else if (offer === '25off') {
       return (
-        <div className="absolute -top-5 right-4 bg-gradient-to-r from-rebuild-pink to-rebuild-purple text-white px-4 py-1.5 rounded-full text-sm font-semibold animate-pulse shadow-lg">
-          25% OFF
+        <div className="absolute -top-6 right-0 left-0 flex justify-center z-10">
+          <div className="bg-gradient-to-r from-rebuild-pink to-rebuild-purple text-white px-6 py-2 rounded-full text-base font-bold shadow-lg transform rotate-0 scale-110">
+            25% OFF
+          </div>
         </div>
       );
     }
@@ -55,12 +60,13 @@ const PricingSection = () => {
           subtitle="Invest in yourself with our affordable and value-packed membership plans."
         />
         
-        <div className="max-w-md mx-auto relative animate-on-scroll">
-          <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-rebuild-purple/30 hover:border-rebuild-purple transition-all duration-300 relative backdrop-blur-sm">
+        <div className="max-w-md mx-auto relative animate-on-scroll mt-16">
+          <div className="bg-white rounded-xl shadow-xl overflow-visible border-2 border-rebuild-purple/30 hover:border-rebuild-purple transition-all duration-300 relative backdrop-blur-sm">
             {renderOffer()}
             
             <div className="bg-gradient-to-r from-rebuild-purple/10 to-rebuild-pink/10 p-6 text-center">
               <h3 className="text-2xl font-bold text-rebuild-purple">Monthly Membership</h3>
+              <p className="text-sm text-gray-600 mt-1">Full access to all facilities & classes</p>
             </div>
             
             <div className="p-8">
@@ -70,9 +76,14 @@ const PricingSection = () => {
                 </div>
               ) : (
                 <>
-                  <div className="flex justify-center mb-8">
-                    <span className="text-5xl font-bold bg-gradient-to-r from-rebuild-purple to-rebuild-pink bg-clip-text text-transparent">₹{price}</span>
-                    <span className="text-gray-500 self-end mb-2 ml-1">/month</span>
+                  <div className="flex flex-col items-center justify-center mb-8">
+                    {offer !== 'none' && (
+                      <span className="text-lg line-through text-gray-400 mb-1">₹{originalPrice}</span>
+                    )}
+                    <div className="flex items-end">
+                      <span className="text-5xl font-bold bg-gradient-to-r from-rebuild-purple to-rebuild-pink bg-clip-text text-transparent">₹{price}</span>
+                      <span className="text-gray-500 self-end mb-2 ml-1">/month</span>
+                    </div>
                   </div>
                   
                   <ul className="space-y-4">
@@ -81,7 +92,8 @@ const PricingSection = () => {
                       "Women-only environment",
                       "Certified women trainers",
                       "Nutrition guidance",
-                      "Progress tracking"
+                      "Progress tracking",
+                      "24/7 community support"
                     ].map((feature, index) => (
                       <li key={index} className="flex items-center transition-all duration-300 hover:translate-x-1 group">
                         <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 group-hover:text-rebuild-purple transition-colors duration-300" />
@@ -95,7 +107,7 @@ const PricingSection = () => {
               <div className="mt-10 text-center">
                 <a 
                   href="#join"
-                  className="inline-block bg-gradient-to-r from-rebuild-purple to-rebuild-pink text-white px-8 py-3.5 rounded-lg font-medium hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group"
+                  className="inline-block bg-gradient-to-r from-rebuild-purple to-rebuild-pink text-white px-8 py-3.5 rounded-lg font-medium hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group w-full"
                 >
                   <span className="relative z-10">Join Now</span>
                   <span className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>

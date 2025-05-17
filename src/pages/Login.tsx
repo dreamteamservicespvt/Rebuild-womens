@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,22 +11,23 @@ const Login = () => {
   const { user } = useFirebase();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("govardhan5009@gmail.com");
-  const [password, setPassword] = useState("govardhan5009@gmail.com");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Redirect to admin if already logged in
-  if (user || localStorage.getItem("isLoggedIn") === "true") {
-    navigate("/admin");
-    return null;
-  }
+  // Move redirect logic to useEffect
+  useEffect(() => {
+    if (user || localStorage.getItem("isLoggedIn") === "true") {
+      navigate("/admin");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     // Check if the credentials match the hardcoded values
-    if (email === "govardhan5009@gmail.com" && password === "govardhan5009@gmail.com") {
+    if (email === "rebuild.info@gmail.com" && password === "@ReBuild_DT($)") {
       // Set local storage to indicate user is logged in
       localStorage.setItem("isLoggedIn", "true");
       

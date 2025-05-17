@@ -1,63 +1,210 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ImageSlideshowProps {
   images: string[];
+  mobileImages?: string[];
   interval?: number;
+  showControls?: boolean;
+  pauseOnHover?: boolean;
+  enableKenBurns?: boolean;
 }
 
-const ImageSlideshow = ({ images, interval = 5000 }: ImageSlideshowProps) => {
+const ImageSlideshow = ({ 
+  images, 
+  mobileImages,
+  interval = 5000, 
+  showControls = false,
+  pauseOnHover = false,
+  enableKenBurns = false
+}: ImageSlideshowProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nextImageIndex, setNextImageIndex] = useState(1);
   const [transitioning, setTransitioning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState<boolean[]>([]);
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const transitionDuration = 1500; // 1.5 second transition
+
+  // Determine which image set to use based on screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  const activeImages = isMobile && mobileImages ? mobileImages : images;
+
+  // Preload images before starting slideshow
+  useEffect(() => {
+    // Reset loaded state when image set changes
+    setImagesLoaded(Array(activeImages.length).fill(false));
+    setAllImagesLoaded(false);
+    
+    // Preload all images and track loading state
+    const imageLoadingPromises = activeImages.map((src, index) => {
+      return new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          setImagesLoaded(prev => {
+            const newState = [...prev];
+            newState[index] = true;
+            return newState;
+          });
+          resolve();
+        };
+        img.onerror = () => {
+          setImagesLoaded(prev => {
+            const newState = [...prev];
+            newState[index] = true; // Mark as loaded even on error to avoid hanging
+            return newState;
+          });
+          resolve();
+        };
+        img.src = src;
+      });
+    });
+    
+    // When all images are loaded, update state
+    Promise.all(imageLoadingPromises).then(() => {
+      setAllImagesLoaded(true);
+    });
+  }, [activeImages]);
+
+  // Check if at least the first two images are loaded to begin slideshow
+  const initialImagesLoaded = imagesLoaded[0] && (activeImages.length === 1 || imagesLoaded[1]);
+
+  const goToNextSlide = () => {
+    if (transitioning || activeImages.length <= 1) return;
+    
+    setTransitioning(true);
+    setTimeout(() => {
+      setCurrentImageIndex(nextImageIndex);
+      setNextImageIndex((nextImageIndex + 1) % activeImages.length);
+      setTransitioning(false);
+    }, transitionDuration);
+  };
+
+  const goToPrevSlide = () => {
+    if (transitioning || activeImages.length <= 1) return;
+    
+    setTransitioning(true);
+    const prevIndex = (currentImageIndex - 1 + activeImages.length) % activeImages.length;
+    setTimeout(() => {
+      setCurrentImageIndex(prevIndex);
+      setNextImageIndex(currentImageIndex);
+      setTransitioning(false);
+    }, transitionDuration);
+  };
 
   useEffect(() => {
-    if (images.length <= 1) return;
+    // Don't start slideshow until at least first two images are loaded
+    if (activeImages.length <= 1 || isPaused || !initialImagesLoaded) return;
     
-    const timer = setInterval(() => {
+    const startTransition = () => {
+      // Don't transition if next image isn't loaded yet
+      if (!imagesLoaded[nextImageIndex]) return;
+      
       setTransitioning(true);
       
       setTimeout(() => {
         setCurrentImageIndex(nextImageIndex);
-        setNextImageIndex((nextImageIndex + 1) % images.length);
+        setNextImageIndex((nextImageIndex + 1) % activeImages.length);
         setTransitioning(false);
-      }, 1000); // 1 second transition time
-      
-    }, interval);
+      }, transitionDuration);
+    };
     
-    return () => clearInterval(timer);
-  }, [images, interval, nextImageIndex]);
+    // Clear existing timer before setting a new one
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    timerRef.current = setInterval(startTransition, interval);
+    
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [activeImages, interval, nextImageIndex, isPaused, initialImagesLoaded, imagesLoaded]);
 
-  if (images.length === 0) return null;
+  if (activeImages.length === 0) return null;
+  
+  // Display loading state if the first image isn't loaded yet
+  if (!imagesLoaded[0]) {
+    return (
+      <div className="absolute inset-0 w-full h-full bg-black/70 -z-10">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
   
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden -z-10">
-      {/* Current Image */}
+    <div 
+      className="absolute inset-0 w-full h-full overflow-hidden -z-10"
+      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
+    >
+      {/* First image already loaded - show immediately */}
       <div
-        className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ${
+        className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-[1500ms] ease-in-out will-change-transform will-change-opacity ${
           transitioning ? "opacity-0" : "opacity-100"
-        }`}
+        } ${enableKenBurns && !transitioning ? "animate-kenBurns" : ""}`}
         style={{
-          backgroundImage: `url(${images[currentImageIndex]})`,
+          backgroundImage: `url(${activeImages[currentImageIndex]})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       />
       
-      {/* Next Image (preloaded) */}
-      <div
-        className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ${
-          transitioning ? "opacity-100" : "opacity-0"
-        }`}
-        style={{
-          backgroundImage: `url(${images[nextImageIndex]})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+      {/* Only render next image if it's loaded */}
+      {imagesLoaded[nextImageIndex] && (
+        <div
+          className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-[1500ms] ease-in-out will-change-transform will-change-opacity ${
+            transitioning ? "opacity-100" : "opacity-0"
+          } ${enableKenBurns && transitioning ? "animate-kenBurns" : ""}`}
+          style={{
+            backgroundImage: `url(${activeImages[nextImageIndex]})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+      )}
       
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      {/* Enhanced gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
+
+      {/* Navigation Controls */}
+      {showControls && activeImages.length > 1 && (
+        <>
+          <button 
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full transition-colors duration-300 z-10"
+            onClick={goToPrevSlide}
+            aria-label="Previous slide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button 
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full transition-colors duration-300 z-10"
+            onClick={goToNextSlide}
+            aria-label="Next slide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      )}
     </div>
   );
 };

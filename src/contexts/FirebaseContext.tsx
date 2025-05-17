@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { initializeApp } from "firebase/app";
 import { 
@@ -48,6 +47,7 @@ export type BookingType = {
   paymentStatus: 'pending' | 'completed';
   price: number;
   createdAt: Timestamp;
+  screenshotUrl?: string;
 };
 
 export type PriceConfig = {

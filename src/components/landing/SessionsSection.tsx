@@ -1,13 +1,36 @@
-
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, Users } from "lucide-react";
 import SectionTitle from "@/components/SectionTitle";
 import { cn } from "@/lib/utils";
 
 const sessions = [
-  { id: 1, time: "9 AM–10 AM", period: "Morning" },
-  { id: 2, time: "10 AM–11 AM", period: "Morning" },
-  { id: 3, time: "4 PM–5 PM", period: "Evening" },
-  { id: 4, time: "5 PM–6 PM", period: "Evening" },
+  { 
+    id: 1, 
+    time: "9 AM–10 AM", 
+    period: "Morning",
+    description: "Perfect morning session designed to energize your day with a balanced mix of cardio and strength training.",
+    maxCapacity: 12
+  },
+  { 
+    id: 2, 
+    time: "10 AM–11 AM", 
+    period: "Morning",
+    description: "Start your day with this invigorating routine focused on core strength and flexibility.",
+    maxCapacity: 12
+  },
+  { 
+    id: 3, 
+    time: "4 PM–5 PM", 
+    period: "Evening",
+    description: "Wind down your day with this calming yet effective workout combining yoga and light resistance training.",
+    maxCapacity: 10
+  },
+  { 
+    id: 4, 
+    time: "5 PM–6 PM", 
+    period: "Evening",
+    description: "A high-energy evening session that helps release the day's stress with cardio and toning exercises.",
+    maxCapacity: 12
+  },
 ];
 
 const SessionsSection = () => {
@@ -24,17 +47,19 @@ const SessionsSection = () => {
           subtitle="Choose the time slot that works best for your schedule and start your fitness journey today."
         />
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-300">
           {sessions.map((session, index) => (
             <div 
               key={session.id}
               className={cn(
-                "bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-on-scroll",
+                "bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1 animate-on-scroll",
                 session.period === "Morning" 
                   ? "hover:border-amber-400 border-2 border-transparent" 
                   : "hover:border-indigo-400 border-2 border-transparent"
               )}
-              style={{ animationDelay: `${index * 0.1}s` }}
+              style={{ 
+                animationDelay: `${index * 0.1}s`
+              }}
             >
               <div className={cn(
                 "p-4",
@@ -61,9 +86,14 @@ const SessionsSection = () => {
                   <h3 className="font-semibold text-xl">{session.time}</h3>
                 </div>
                 
-                <p className="text-gray-600">
-                  Perfect {session.period.toLowerCase()} session designed to energize your day.
+                <p className="text-gray-600 mb-4">
+                  {session.description}
                 </p>
+                
+                <div className="flex items-center text-gray-500 mt-auto">
+                  <Users className="h-4 w-4 mr-1" />
+                  <span className="text-sm font-medium">{session.maxCapacity} max</span>
+                </div>
               </div>
             </div>
           ))}
