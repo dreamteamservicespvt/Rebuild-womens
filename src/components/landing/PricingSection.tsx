@@ -1,0 +1,124 @@
+
+import { useEffect, useState } from "react";
+import SectionTitle from "@/components/SectionTitle";
+import { CheckCircle } from "lucide-react";
+import { useFirebase } from "@/contexts/FirebaseContext";
+
+const PricingSection = () => {
+  const { getPriceConfig } = useFirebase();
+  const [price, setPrice] = useState(4000);
+  const [offer, setOffer] = useState<'none' | '50off' | '25off'>('none');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPricing = async () => {
+      try {
+        const config = await getPriceConfig();
+        setPrice(config.discountedPrice);
+        setOffer(config.currentOffer);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching price:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchPricing();
+  }, [getPriceConfig]);
+
+  const renderOffer = () => {
+    if (offer === '50off') {
+      return (
+        <div className="absolute -top-5 right-4 bg-gradient-to-r from-rebuild-purple to-rebuild-pink text-white px-4 py-1.5 rounded-full text-sm font-semibold animate-pulse shadow-lg">
+          50% OFF
+        </div>
+      );
+    } else if (offer === '25off') {
+      return (
+        <div className="absolute -top-5 right-4 bg-gradient-to-r from-rebuild-pink to-rebuild-purple text-white px-4 py-1.5 rounded-full text-sm font-semibold animate-pulse shadow-lg">
+          25% OFF
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <section id="pricing" className="section relative overflow-hidden bg-gradient-to-b from-purple-100/40 to-pink-50/40 py-24">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl -translate-y-1/3 translate-x-1/4"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-200/30 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
+      
+      <div className="container-custom relative z-10">
+        <SectionTitle 
+          title="Simple & Transparent Pricing" 
+          subtitle="Invest in yourself with our affordable and value-packed membership plans."
+        />
+        
+        <div className="max-w-md mx-auto relative animate-on-scroll">
+          <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-rebuild-purple/30 hover:border-rebuild-purple transition-all duration-300 relative backdrop-blur-sm">
+            {renderOffer()}
+            
+            <div className="bg-gradient-to-r from-rebuild-purple/10 to-rebuild-pink/10 p-6 text-center">
+              <h3 className="text-2xl font-bold text-rebuild-purple">Monthly Membership</h3>
+            </div>
+            
+            <div className="p-8">
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex justify-center mb-8">
+                    <span className="text-5xl font-bold bg-gradient-to-r from-rebuild-purple to-rebuild-pink bg-clip-text text-transparent">₹{price}</span>
+                    <span className="text-gray-500 self-end mb-2 ml-1">/month</span>
+                  </div>
+                  
+                  <ul className="space-y-4">
+                    {[
+                      "Personalized workout plans",
+                      "Women-only environment",
+                      "Certified women trainers",
+                      "Nutrition guidance",
+                      "Progress tracking"
+                    ].map((feature, index) => (
+                      <li key={index} className="flex items-center transition-all duration-300 hover:translate-x-1 group">
+                        <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 group-hover:text-rebuild-purple transition-colors duration-300" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              
+              <div className="mt-10 text-center">
+                <a 
+                  href="#join"
+                  className="inline-block bg-gradient-to-r from-rebuild-purple to-rebuild-pink text-white px-8 py-3.5 rounded-lg font-medium hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group"
+                >
+                  <span className="relative z-10">Join Now</span>
+                  <span className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          {offer !== 'none' && (
+            <div className="mt-4 text-center bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-md animate-on-scroll">
+              <p className="text-sm font-medium">
+                {offer === '50off' ? (
+                  <span>Limited time offer: <strong className="text-rebuild-purple">50% OFF</strong> for first 20 members!</span>
+                ) : (
+                  <span>Special deal: <strong className="text-rebuild-pink">25% OFF</strong> for next 20 members!</span>
+                )}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default PricingSection;
