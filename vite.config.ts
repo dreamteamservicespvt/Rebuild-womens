@@ -16,7 +16,13 @@ export default defineConfig({
         return html.replace(
           /<head>/,
           `<head>
-            <link rel="icon" href="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747486121/dqyuqvt8l6vb0fzqsxbc.jpg" />`
+            <link rel="icon" href="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747488784/ukxacg9kkjcewvwgml2u.png" />
+            <meta property="og:image" content="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747488784/ukxacg9kkjcewvwgml2u.png" />
+            <meta name="twitter:image" content="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747488784/ukxacg9kkjcewvwgml2u.png" />
+            <meta property="og:title" content="Rebuild Fitness - Kakinada's Exclusive Weight Loss Program for Women" />
+            <meta property="og:description" content="Rebuild Your Body. Redefine Your Confidence. Kakinada's premier fitness center designed exclusively for women." />
+            <meta name="description" content="Rebuild Fitness offers exclusive weight loss programs for women in Kakinada. Transform your body and boost your confidence with our specialized sessions." />
+            <meta name="keywords" content="women fitness, Kakinada gym, weight loss, fitness for women, rebuild fitness" />`
         );
       }
     }

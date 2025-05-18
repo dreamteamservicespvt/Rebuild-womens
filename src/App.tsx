@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +9,7 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import PageLoader from '@/components/common/PageLoader';
 
 // Create a client
 const queryClient = new QueryClient();
@@ -27,6 +27,7 @@ const App = () => {
         <BrowserRouter>
           <ScrollAnimationWrapper>
             <TooltipProvider>
+              <PageLoader duration={2500} />
               <Toaster />
               <Sonner />
               <Routes>

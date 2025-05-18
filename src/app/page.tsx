@@ -42,18 +42,23 @@ const HeroSection = () => {
         enableKenBurns={true}
       />
       
+      {/* Add a semi-transparent overlay to improve text readability */}
+      <div className="absolute inset-0 bg-black/40 z-[1]"></div>
+      
       <div className="container-custom relative z-10 text-center">
-        {/* Removing the dark gradient overlay */}
-        
-        <div className="max-w-3xl mx-auto px-4 py-12 relative">
-          {/* Simplified premium headline */}
+        <div className="max-w-3xl mx-auto px-4 py-12 relative backdrop-blur-sm bg-black/30 rounded-xl">
+          {/* Improved text readability with shadows and outlines */}
           <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
-            <span className="block mb-3 text-white animate-fade-down">Rebuild Your Body.</span> 
-            <span className="block text-rebuild-pink animate-fade-down" style={{ animationDelay: "0.3s" }}>Redefine Your Confidence.</span>
+            <span className="block mb-3 text-white animate-fade-down drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              Rebuild Your Body.
+            </span> 
+            <span className="block text-rebuild-pink animate-fade-down drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ animationDelay: "0.3s", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+              Redefine Your Confidence.
+            </span>
           </h1>
           
-          {/* Concise subheadline */}
-          <p className="font-sans text-xl md:text-2xl mb-10 leading-relaxed animate-fade-up opacity-0" 
+          {/* Improved paragraph readability */}
+          <p className="font-sans text-xl md:text-2xl mb-10 leading-relaxed animate-fade-up opacity-0 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]" 
              style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}>
             Kakinada's Exclusive Weight Loss Program for Women.
           </p>

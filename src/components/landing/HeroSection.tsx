@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import ImageSlideshow from "@/components/ImageSlideshow";
+import NavigationBar from "@/components/landing/NavigationBar";
 import "@/styles/animations.css";
 
 // Desktop/Large Screen images (≥768px)
@@ -10,7 +11,6 @@ const DESKTOP_IMAGES = [
   "https://i.pinimg.com/736x/2f/7e/18/2f7e1807fa627358b26952bcdcd66fce.jpg",
   "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=1931&auto=format&fit=crop",
   "https://images.pexels.com/photos/2247179/pexels-photo-2247179.jpeg",
-  "https://static.vecteezy.com/system/resources/thumbnails/003/452/165/small_2x/sporty-woman-using-waist-tape-line-in-fitness-gym-sport-club-training-photo.jpg"
 ];
 
 // Mobile Screen images (<768px)
@@ -34,6 +34,9 @@ const HeroSection = () => {
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center text-white">
+      {/* Add NavigationBar component */}
+      <NavigationBar />
+      
       <ImageSlideshow 
         images={DESKTOP_IMAGES} 
         mobileImages={MOBILE_IMAGES}
@@ -42,18 +45,23 @@ const HeroSection = () => {
         enableKenBurns={true}
       />
       
+      {/* Add a semi-transparent overlay to improve text readability */}
+      <div className="absolute inset-0 bg-black/40 z-[1]"></div>
+      
       <div className="container-custom relative z-10 text-center">
-        {/* Removing the dark gradient overlay */}
-        
-        <div className="max-w-3xl mx-auto px-4 py-12 relative">
-          {/* Simplified premium headline */}
+        <div className="max-w-3xl mx-auto px-4 py-12 relative backdrop-blur-sm bg-black/30 rounded-xl">
+          {/* Improved text readability with shadows and outlines */}
           <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
-            <span className="block mb-3 text-white animate-fade-down">Rebuild Your Body.</span> 
-            <span className="block text-rebuild-pink animate-fade-down" style={{ animationDelay: "0.3s" }}>Redefine Your Confidence.</span>
+            <span className="block mb-3 text-white animate-fade-down drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              Rebuild Your Body.
+            </span> 
+            <span className="block text-rebuild-pink animate-fade-down drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ animationDelay: "0.3s", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+              Redefine Your Confidence.
+            </span>
           </h1>
           
-          {/* Concise subheadline */}
-          <p className="font-sans text-xl md:text-2xl mb-10 leading-relaxed animate-fade-up opacity-0" 
+          {/* Improved paragraph readability */}
+          <p className="font-sans text-xl md:text-2xl mb-10 leading-relaxed animate-fade-up opacity-0 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]" 
              style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}>
             Kakinada's Exclusive Weight Loss Program for Women.
           </p>
