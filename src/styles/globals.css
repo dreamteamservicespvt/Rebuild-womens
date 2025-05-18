@@ -2,23 +2,223 @@
 
 /* Premium button glow effect */
 .hover\:shadow-glow:hover {
-  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5), 0 0 40px rgba(236, 72, 153, 0.2);
+  box-shadow: 0 0 15px #FFF318, 0 0 30px rgba(255, 243, 24, 0.5);
+  transition: all 0.3s ease;
 }
 
-/* Enhanced scrollbar for premium feel */
+/* Premium button glow effect */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glow:before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 228, 52, 0.3);
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.6s ease-out;
+  z-index: -1;
+}
+
+.btn-glow:hover:before {
+  transform: scale(1);
+}
+
+/* New gym-themed effects */
+.text-stroke-yellow {
+  -webkit-text-stroke: 1px #FFF318;
+  color: transparent;
+}
+
+.text-shadow-yellow {
+  text-shadow: 0 0 10px rgba(255, 243, 24, 0.7);
+}
+
+.neon-outline {
+  position: relative;
+}
+
+.neon-outline::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  padding: 3px;
+  background: linear-gradient(45deg, #FFF318, rgba(255, 243, 24, 0.5), #FFF318);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.neon-outline:hover::before {
+  opacity: 1;
+}
+
+/* Gym-themed loading bar */
+.gym-loader {
+  width: 100%;
+  height: 4px;
+  background: #1A1A1A;
+  overflow: hidden;
+  position: relative;
+}
+
+.gym-loader::after {
+  content: '';
+  position: absolute;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(26, 26, 26, 0), #FFF318, rgba(26, 26, 26, 0));
+  animation: gym-loader-animation 1.5s infinite;
+}
+
+@keyframes gym-loader-animation {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  background-color: #0A0A0A;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #1A1A1A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #a21caf, #ec4899);
-  border-radius: 4px;
+  background: #2A2A2A;
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #86198f, #db2777);
+  background-color: rgba(255, 228, 52, 0.5);
+  box-shadow: 0 0 10px #FFF318;
+}
+
+/* Dark theme utility classes */
+.dark-gradient {
+  background: linear-gradient(to bottom, #1E1E1E, #121212, #0A0A0A);
+}
+
+.dark-card {
+  background-color: #1E1E1E;
+  border: 1px solid #2A2A2A;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.dark-card:hover {
+  border-color: rgba(255, 228, 52, 0.5);
+  box-shadow: 0 4px 20px rgba(255, 228, 52, 0.1);
+}
+
+/* Yellow neon glow effects */
+.shadow-neon-yellow {
+  box-shadow: 0 0 15px rgba(255, 228, 52, 0.4);
+}
+
+.text-glow-yellow {
+  text-shadow: 0 0 10px rgba(255, 228, 52, 0.7);
+}
+
+/* Special dark themed section styling */
+.dark-section {
+  position: relative;
+  background-color: #0A0A0A;
+  overflow: hidden;
+}
+
+.dark-section::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  top: 0;
+  left: 0;
+  background: linear-gradient(to right, transparent, rgba(255, 228, 52, 0.3), transparent);
+}
+
+.dark-section::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to right, transparent, rgba(255, 228, 52, 0.3), transparent);
+}
+
+/* Custom form styling for dark theme */
+.dark-input {
+  background-color: #1E1E1E;
+  border: 1px solid #2A2A2A;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.dark-input:focus {
+  border-color: rgba(255, 228, 52, 0.7);
+  box-shadow: 0 0 0 2px rgba(255, 228, 52, 0.2);
+  outline: none;
+}
+
+.dark-label {
+  color: #CCCCCC;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.375rem;
+}
+
+/* Fix for dark mode forms */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: white !important;
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .hover\:shadow-glow:hover {
+    box-shadow: none;  /* Disable glow on mobile for performance */
+  }
+  
+  .text-shadow-yellow {
+    text-shadow: 0 0 5px rgba(255, 243, 24, 0.5);  /* Lighter shadow on mobile */
+  }
+  
+  /* Better mobile performance for animations */
+  .animate-neon-pulse,
+  .animate-pulse-yellow,
+  .animate-flicker {
+    animation-duration: 3s;  /* Slow down animations on mobile */
+  }
+  
+  /* Improve touch targets for mobile */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

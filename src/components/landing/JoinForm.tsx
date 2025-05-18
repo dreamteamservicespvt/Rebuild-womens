@@ -168,8 +168,8 @@ const JoinForm = () => {
             <div 
               className={`h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
                 step >= s.number 
-                  ? 'bg-rebuild-purple text-white border-rebuild-purple' 
-                  : 'bg-white text-gray-400 border-gray-200'
+                  ? 'bg-gym-yellow text-gym-black border-gym-yellow' 
+                  : 'bg-gym-gray-dark text-white/70 border-gym-gray-light'
               }`}
             >
               {step > s.number ? (
@@ -179,7 +179,7 @@ const JoinForm = () => {
               )}
             </div>
             <span className={`text-xs mt-1.5 ${
-              step >= s.number ? 'text-rebuild-purple font-medium' : 'text-gray-500'
+              step >= s.number ? 'text-gym-yellow font-medium' : 'text-white/70'
             }`}>
               {s.name}
             </span>
@@ -188,11 +188,11 @@ const JoinForm = () => {
       </div>
       <div className="relative mt-4">
         <div className="absolute inset-0 flex items-center">
-          <div className="h-1 w-full bg-gray-200 rounded"></div>
+          <div className="h-1 w-full bg-gym-gray-light rounded"></div>
         </div>
         <div className="relative flex justify-between">
           <div 
-            className="h-1 bg-rebuild-purple rounded transition-all duration-700 ease-in-out" 
+            className="h-1 bg-gym-yellow rounded transition-all duration-700 ease-in-out shadow-[0_0_5px_rgba(255,243,24,0.7)]" 
             style={{ 
               width: step === 1 ? '0%' : step === 2 ? '50%' : '100%',
               position: 'absolute',
@@ -206,7 +206,7 @@ const JoinForm = () => {
   );
 
   return (
-    <div className="max-w-md mx-auto bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-xl border border-white/50">
+    <div className="max-w-md mx-auto p-6 sm:p-8">
       <ProgressBar />
       
       <AnimatePresence mode="wait">
@@ -218,9 +218,7 @@ const JoinForm = () => {
             animate="visible"
             exit="exit"
           >
-            <h3 className="text-2xl font-bold text-center mb-6 text-rebuild-purple">
-              Join Our Women-only Weight Loss Program
-            </h3>
+           
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
                 name="name"
@@ -228,7 +226,7 @@ const JoinForm = () => {
                 onChange={handleChange}
                 placeholder="Full Name"
                 required
-                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
+                className="bg-gym-gray-dark text-white border-gym-gray-light focus:border-gym-yellow focus:ring-gym-yellow/50"
               />
               
               <Input
@@ -238,7 +236,7 @@ const JoinForm = () => {
                 placeholder="Phone Number"
                 required
                 type="tel"
-                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
+                className="bg-gym-gray-dark text-white border-gym-gray-light focus:border-gym-yellow focus:ring-gym-yellow/50"
               />
               
               <Input
@@ -247,7 +245,7 @@ const JoinForm = () => {
                 onChange={handleChange}
                 placeholder="Email Address"
                 type="email"
-                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
+                className="bg-gym-gray-dark text-white border-gym-gray-light focus:border-gym-yellow focus:ring-gym-yellow/50"
               />
               
               <Input
@@ -259,7 +257,7 @@ const JoinForm = () => {
                 required
                 min="18"
                 max="100"
-                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
+                className="bg-gym-gray-dark text-white border-gym-gray-light focus:border-gym-yellow focus:ring-gym-yellow/50"
               />
               
               <Select 
@@ -267,7 +265,7 @@ const JoinForm = () => {
                 onValueChange={(value) => handleSelectChange(value, "session")}
                 required
               >
-                <SelectTrigger className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple">
+                <SelectTrigger className="bg-gym-gray-dark text-white border-gym-gray-light focus:border-gym-yellow focus:ring-gym-yellow/50">
                   <SelectValue placeholder="Select Preferred Session" />
                 </SelectTrigger>
                 <SelectContent>
@@ -286,12 +284,12 @@ const JoinForm = () => {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Any specific requirements or questions? (Optional)"
-                className="bg-white/70 backdrop-blur-sm focus:border-rebuild-purple"
+                className="bg-gym-gray-dark text-white border-gym-gray-light focus:border-gym-yellow focus:ring-gym-yellow/50"
               />
               
               <Button 
                 type="submit" 
-                className="w-full bg-rebuild-purple hover:bg-rebuild-purple/90 group" 
+                className="w-full bg-gym-yellow text-gym-black hover:bg-gym-yellow/90 group" 
                 disabled={loading}
               >
                 {loading ? "Processing..." : (
@@ -313,7 +311,7 @@ const JoinForm = () => {
             animate="visible"
             exit="exit"
           >
-            <h3 className="text-2xl font-bold mb-6 text-rebuild-purple text-center">Complete Your Payment</h3>
+            <h3 className="text-2xl font-bold mb-6 text-gym-yellow text-center">Complete Your Payment</h3>
             <p className="mb-6 text-center">Scan the QR code to pay and secure your spot:</p>
             
             <div className="max-w-sm mx-auto mb-6">

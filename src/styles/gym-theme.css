@@ -1,0 +1,329 @@
+/* Gym theme specific styles */
+
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(255, 243, 24, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 243, 24, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.metal-texture {
+  background-image: linear-gradient(45deg, 
+    rgba(255,255,255,0.05) 25%, 
+    transparent 25%, 
+    transparent 50%, 
+    rgba(255,255,255,0.05) 50%, 
+    rgba(255,255,255,0.05) 75%, 
+    transparent 75%, 
+    transparent
+  );
+  background-size: 4px 4px;
+}
+
+/* Utility classes for gym theme */
+.gym-text-glow {
+  text-shadow: 0 0 5px rgba(255, 243, 24, 0.5), 0 0 10px rgba(255, 243, 24, 0.3);
+}
+
+.gym-border-glow {
+  box-shadow: 0 0 5px rgba(255, 243, 24, 0.7), 0 0 10px rgba(255, 243, 24, 0.4);
+}
+
+/* Animated elements */
+.gym-pulse {
+  animation: gym-pulse 2s infinite;
+}
+
+@keyframes gym-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 243, 24, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 243, 24, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 243, 24, 0);
+  }
+}
+
+/* Noise overlay for gritty gym feel */
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* Custom angle decorations for corners */
+.gym-corner-angles::before,
+.gym-corner-angles::after {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-color: #FFF318;
+  opacity: 0.8;
+}
+
+.gym-corner-angles::before {
+  top: 0;
+  left: 0;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.gym-corner-angles::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* Progress bars */
+.gym-progress-bar {
+  height: 6px;
+  background: rgba(26, 26, 26, 0.3);
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.gym-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #FFF318;
+  border-radius: 3px;
+  transition: width 0.5s ease-out;
+}
+
+.gym-progress-bar[data-value]::after {
+  width: attr(data-value %);
+}
+
+/* Barbell decoration */
+.barbell-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.barbell-divider::before,
+.barbell-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 243, 24, 0.3);
+}
+
+.barbell-divider span {
+  padding: 0 10px;
+  color: #FFF318;
+  font-size: 20px;
+  text-shadow: 0 0 8px rgba(255, 243, 24, 0.7);
+}
+
+/* Base theme colors - dark with yellow neon */
+body {
+  @apply bg-gym-black text-white;
+}
+
+/* Section styling */
+.section {
+  @apply bg-gym-black py-16 relative overflow-hidden;
+}
+
+.section::before {
+  content: '';
+  @apply absolute -inset-1 bg-gradient-to-b from-gym-yellow/10 to-transparent z-0 pointer-events-none;
+}
+
+/* Decorative elements */
+.section-glow {
+  @apply absolute w-64 h-64 rounded-full blur-3xl opacity-20 pointer-events-none;
+}
+
+.glow-yellow {
+  @apply bg-gym-yellow/20;
+}
+
+.glow-purple {
+  @apply bg-rebuild-purple/20;
+}
+
+.glow-pink {
+  @apply bg-rebuild-pink/20;
+}
+
+/* Card styling */
+.gym-card {
+  @apply bg-gym-gray-dark border border-gym-gray-light rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden;
+}
+
+.gym-card:hover {
+  @apply border-gym-yellow/50;
+  box-shadow: 0 0 20px rgba(255, 228, 52, 0.2);
+}
+
+/* Button styles (already defined in the button.tsx component) */
+
+/* Text styling */
+.gym-subtitle {
+  @apply text-gym-yellow/90 text-sm uppercase tracking-wider font-medium mb-2;
+  text-shadow: 0 0 5px rgba(255, 243, 24, 0.5);
+}
+
+.gym-title {
+  @apply text-white text-3xl sm:text-4xl font-bold mb-6 tracking-wide;
+  text-shadow: 0 0 8px rgba(255, 243, 24, 0.4);
+}
+
+.gym-title-highlight {
+  @apply text-gym-yellow;
+  text-shadow: 0 0 12px rgba(255, 243, 24, 0.7);
+}
+
+/* Special neon effects */
+.neon-text {
+  text-shadow: 0 0 10px rgba(255, 228, 52, 0.9), 0 0 20px rgba(255, 228, 52, 0.5);
+  @apply text-gym-yellow;
+}
+
+.neon-border {
+  box-shadow: 0 0 15px rgba(255, 228, 52, 0.7), 0 0 30px rgba(255, 228, 52, 0.3);
+  @apply border border-gym-yellow;
+}
+
+/* Pricing cards */
+.pricing-card {
+  @apply bg-gym-gray-dark border border-gym-gray-light rounded-lg overflow-hidden transition-all duration-300;
+}
+
+.pricing-card:hover {
+  @apply border-gym-yellow;
+  box-shadow: 0 0 20px rgba(255, 228, 52, 0.3);
+}
+
+.pricing-card-header {
+  @apply bg-gradient-to-r from-gym-gray-dark to-gym-gray p-5 border-b border-gym-gray-light;
+}
+
+.pricing-card-price {
+  @apply text-gym-yellow text-5xl font-bold;
+  text-shadow: 0 0 10px rgba(255, 243, 24, 0.6);
+}
+
+.pricing-card-body {
+  @apply p-5;
+}
+
+.pricing-feature {
+  @apply flex items-center py-2 text-white/90;
+}
+
+.pricing-feature svg {
+  @apply text-gym-yellow mr-2 flex-shrink-0;
+}
+
+/* Testimonial styling */
+.testimonial-card {
+  @apply bg-gym-gray border border-gym-gray-light rounded-lg p-6 shadow-md;
+}
+
+.testimonial-quote {
+  @apply text-white/90 italic mb-4;
+}
+
+.testimonial-author {
+  @apply text-gym-yellow font-semibold;
+}
+
+/* Form styling */
+.gym-input {
+  @apply bg-gym-gray-dark border border-gym-gray-light rounded-md p-3 text-white w-full focus:border-gym-yellow focus:outline-none focus:ring-1 focus:ring-gym-yellow/50 transition-all;
+}
+
+.gym-select {
+  @apply bg-gym-gray-dark border border-gym-gray-light rounded-md p-3 text-white w-full focus:border-gym-yellow focus:outline-none;
+}
+
+.gym-label {
+  @apply text-white/80 text-sm font-medium mb-1 block;
+}
+
+/* Footer styling */
+.gym-footer {
+  @apply bg-gym-black border-t border-gym-gray-light py-10;
+}
+
+.gym-footer-title {
+  @apply text-gym-yellow font-bold text-lg mb-4;
+  text-shadow: 0 0 8px rgba(255, 243, 24, 0.4);
+}
+
+.gym-footer-link {
+  @apply text-white/70 hover:text-gym-yellow transition-colors;
+}
+
+.gym-footer-link:hover {
+  text-shadow: 0 0 8px rgba(255, 243, 24, 0.6);
+}
+
+/* Add dark overlay to image slideshow */
+.image-slideshow-overlay {
+  @apply bg-black/60 absolute inset-0 z-[1];
+}
+
+/* Section specific styling */
+.sessions-section h2,
+.pricing-section h2,
+.join-section h2,
+.location-section h2 {
+  @apply text-white text-3xl sm:text-4xl font-bold tracking-wide;
+  text-shadow: 0 0 10px rgba(255, 243, 24, 0.7), 0 0 20px rgba(255, 243, 24, 0.4);
+}
+
+.sessions-section .gym-card,
+.pricing-section .pricing-card,
+.join-section .gym-card,
+.location-section .gym-card {
+  @apply bg-gym-gray-dark border-gym-gray-light hover:border-gym-yellow;
+  box-shadow: 0 0 15px rgba(255, 243, 24, 0.1);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.sessions-section .gym-card:hover,
+.pricing-section .pricing-card:hover,
+.join-section .gym-card:hover,
+.location-section .gym-card:hover {
+  box-shadow: 0 0 20px rgba(255, 243, 24, 0.3), 0 0 40px rgba(255, 243, 24, 0.1);
+}
+
+/* Enhanced button styling */
+.btn-primary {
+  @apply bg-gym-yellow text-gym-black font-bold py-3 px-6 rounded-md transition-all;
+  box-shadow: 0 0 10px rgba(255, 243, 24, 0.5), 0 0 20px rgba(255, 243, 24, 0.2);
+}
+
+.btn-primary:hover {
+  @apply bg-gym-yellow brightness-110;
+  box-shadow: 0 0 15px rgba(255, 243, 24, 0.7), 0 0 30px rgba(255, 243, 24, 0.4);
+}
+
+.btn-secondary {
+  @apply bg-transparent text-gym-yellow font-bold py-3 px-6 rounded-md border border-gym-yellow transition-all;
+  box-shadow: 0 0 10px rgba(255, 243, 24, 0.3);
+}
+
+.btn-secondary:hover {
+  @apply bg-gym-yellow/10;
+  box-shadow: 0 0 15px rgba(255, 243, 24, 0.5), 0 0 30px rgba(255, 243, 24, 0.2);
+}

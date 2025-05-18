@@ -73,6 +73,17 @@ export default {
 					pink: '#D946EF',
 					softpink: '#FFDEE2',
 					dark: '#1A1F2C',
+				},
+				// Gym color palette for dark theme
+				gym: {
+					yellow: '#FFE434',
+					black: '#0A0A0A',
+					'gray-dark': '#121212',
+					gray: '#1E1E1E',
+					'gray-light': '#2A2A2A',
+					'yellow-glow': 'rgba(255, 228, 52, 0.5)',
+					'text-primary': '#FFFFFF',
+					'text-secondary': '#CCCCCC',
 				}
 			},
 			borderRadius: {

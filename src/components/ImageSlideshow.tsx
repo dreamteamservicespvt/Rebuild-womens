@@ -25,7 +25,7 @@ const ImageSlideshow = ({
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const transitionDuration = 1500; // 1.5 second transition
+  const transitionDuration = 2000; // Changed to 2000ms for smoother transition
 
   // Determine which image set to use based on screen size
   useEffect(() => {
@@ -153,34 +153,44 @@ const ImageSlideshow = ({
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
-      {/* First image already loaded - show immediately */}
+      {/* Current Image */}
       <div
-        className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-[1500ms] ease-in-out will-change-transform will-change-opacity ${
+        className={`absolute inset-0 w-full h-full bg-black transition-all duration-[2000ms] ease-out ${
           transitioning ? "opacity-0" : "opacity-100"
-        } ${enableKenBurns && !transitioning ? "animate-kenBurns" : ""}`}
+        }`}
         style={{
           backgroundImage: `url(${activeImages[currentImageIndex]})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
+          transform: enableKenBurns ? `scale(${transitioning ? 1.05 : 1.1})` : "scale(1)",
+          transition: enableKenBurns 
+            ? "transform 8s ease-out, opacity 2s ease-out"
+            : "opacity 2s ease-out",
         }}
       />
       
-      {/* Only render next image if it's loaded */}
+      {/* Next Image */}
       {imagesLoaded[nextImageIndex] && (
         <div
-          className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-[1500ms] ease-in-out will-change-transform will-change-opacity ${
+          className={`absolute inset-0 w-full h-full bg-black transition-all duration-[2000ms] ease-out ${
             transitioning ? "opacity-100" : "opacity-0"
-          } ${enableKenBurns && transitioning ? "animate-kenBurns" : ""}`}
+          }`}
           style={{
             backgroundImage: `url(${activeImages[nextImageIndex]})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
+            transform: enableKenBurns ? `scale(${transitioning ? 1.1 : 1.05})` : "scale(1)",
+            transition: enableKenBurns 
+              ? "transform 8s ease-out, opacity 2s ease-out"
+              : "opacity 2s ease-out",
           }}
         />
       )}
-      
-      {/* Enhanced gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
+
+      {/* Enhanced gradient overlay with smoother transition */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black/80 transition-opacity duration-[2000ms] ease-out"
+      ></div>
 
       {/* Navigation Controls */}
       {showControls && activeImages.length > 1 && (
