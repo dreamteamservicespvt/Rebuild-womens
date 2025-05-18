@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { 
   Card, 
@@ -88,23 +87,23 @@ const PriceManager = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <Card>
+      <Card className="bg-gym-gray-dark border-gym-gray-light">
         <CardHeader>
-          <CardTitle>Membership Pricing</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-gym-yellow">Membership Pricing</CardTitle>
+          <CardDescription className="text-white/70">
             Set the pricing and discounts for new members
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="p-4 bg-gym-gray rounded-lg border border-gym-gray-light">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">Base Price:</span>
-                <span className="font-semibold">₹{basePrice}</span>
+                <span className="font-medium text-white/80">Base Price:</span>
+                <span className="font-semibold text-white">₹{basePrice}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="font-medium">Current Price:</span>
-                <span className="font-semibold text-lg text-rebuild-purple">₹{discountedPrice}</span>
+                <span className="font-medium text-white/80">Current Price:</span>
+                <span className="font-semibold text-lg text-gym-yellow">₹{discountedPrice}</span>
               </div>
             </div>
             
@@ -114,7 +113,7 @@ const PriceManager = () => {
               <div className="grid grid-cols-1 gap-3">
                 <Button
                   variant={currentOffer === '50off' ? "default" : "outline"}
-                  className={currentOffer === '50off' ? "bg-rebuild-purple" : ""}
+                  className={currentOffer === '50off' ? "bg-gym-yellow text-black" : "border-gym-yellow text-gym-yellow hover:bg-gym-yellow/20"}
                   onClick={() => handleSetOffer('50off')}
                   disabled={updating}
                 >

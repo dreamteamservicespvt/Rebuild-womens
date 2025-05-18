@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,23 +41,33 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gym-black">
       <AdminHeader />
       
       <main className="container mx-auto px-4 py-8">
-        <h2 className="text-3xl font-bold mb-6">Welcome to your Admin Dashboard</h2>
+        <h2 className="text-3xl font-bold mb-6 text-white">Welcome to your Admin Dashboard</h2>
         
         <Tabs defaultValue="bookings" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-            <TabsTrigger value="pricing">Pricing & Discounts</TabsTrigger>
+          <TabsList className="bg-gym-gray-dark">
+            <TabsTrigger 
+              value="bookings" 
+              className="data-[state=active]:bg-gym-yellow data-[state=active]:text-black text-white"
+            >
+              Bookings
+            </TabsTrigger>
+            <TabsTrigger 
+              value="pricing" 
+              className="data-[state=active]:bg-gym-yellow data-[state=active]:text-black text-white"
+            >
+              Pricing & Discounts
+            </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="bookings" className="space-y-6">
+          <TabsContent value="bookings" className="space-y-6 text-white">
             <BookingsTable />
           </TabsContent>
           
-          <TabsContent value="pricing" className="space-y-6">
+          <TabsContent value="pricing" className="space-y-6 text-white">
             <PriceManager />
           </TabsContent>
         </Tabs>

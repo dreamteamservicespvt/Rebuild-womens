@@ -216,17 +216,22 @@ const BookingsTable = () => {
 
   return (
     <>
-      <div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
+      <div className="bg-gym-gray-dark p-4 md:p-6 rounded-lg shadow-md border border-gym-gray-light">
         <div className="mb-4 md:mb-6 flex flex-col md:flex-row justify-between md:items-center gap-3">
-          <h2 className="text-xl font-semibold">Bookings</h2>
+          <h2 className="text-xl font-semibold text-white">Bookings</h2>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <Input
               placeholder="Search bookings..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full sm:max-w-xs"
+              className="w-full sm:max-w-xs bg-gym-gray border-gym-gray-light text-white placeholder:text-white/50"
             />
-            <Button onClick={fetchBookings} variant="outline" size="sm" className="w-full sm:w-auto">
+            <Button 
+              onClick={fetchBookings} 
+              variant="outline" 
+              size="sm" 
+              className="w-full sm:w-auto border-gym-yellow text-gym-yellow hover:bg-gym-yellow/20"
+            >
               Refresh
             </Button>
           </div>
@@ -244,16 +249,16 @@ const BookingsTable = () => {
           // Mobile card view
           <div className="space-y-4">
             {filteredBookings.map((booking) => (
-              <Card key={booking.id} className="overflow-hidden">
+              <Card key={booking.id} className="overflow-hidden bg-gym-gray-dark border-gym-gray-light">
                 <CardContent className="p-4 pt-4">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-semibold text-lg">{booking.name}</h3>
+                    <h3 className="font-semibold text-lg text-white">{booking.name}</h3>
                     <Badge
                       variant={booking.paymentStatus === "completed" ? "default" : "outline"}
                       className={
                         booking.paymentStatus === "completed" 
-                          ? "bg-green-100 text-green-800 hover:bg-green-100" 
-                          : "bg-amber-100 text-amber-800 hover:bg-amber-100"
+                          ? "bg-gym-yellow/20 text-gym-yellow border-gym-yellow" 
+                          : "bg-transparent border-gym-yellow/50 text-gym-yellow/80"
                       }
                     >
                       {booking.paymentStatus === "completed" ? "Paid" : "Pending"}

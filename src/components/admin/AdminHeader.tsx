@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useFirebase } from "@/contexts/FirebaseContext";
@@ -21,14 +20,18 @@ const AdminHeader = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 py-4">
+    <header className="bg-gym-gray-dark border-b border-gym-gray-light py-4">
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-rebuild-purple">Rebuild Fitness Admin</h1>
-          <p className="text-gray-500 text-sm">Manage your women's fitness program</p>
+          <h1 className="text-2xl font-bold text-gym-yellow font-heading">Rebuild Fitness Admin</h1>
+          <p className="text-white/70 text-sm">Manage your women's fitness program</p>
         </div>
         
-        <Button variant="outline" onClick={handleSignOut}>
+        <Button 
+          variant="outline" 
+          onClick={handleSignOut}
+          className="border-gym-yellow text-gym-yellow hover:bg-gym-yellow/20"
+        >
           Sign Out
         </Button>
       </div>
