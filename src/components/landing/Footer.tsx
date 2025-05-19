@@ -143,11 +143,11 @@ const Footer = () => {
                 <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gym-gray-dark shadow-sm border border-gym-gray-light text-gym-yellow mr-3 group-hover:bg-gym-yellow/20 group-hover:text-gym-yellow group-hover:shadow-[0_0_10px_rgba(255,243,24,0.3)] transition-all duration-300">
                   <Mail className="h-4 w-4" />
                 </div>
-                <span className="text-white/80 group-hover:text-gym-yellow transition-colors">contact@rebuild.fit</span>
+                <span className="text-white/80 group-hover:text-gym-yellow transition-colors">contact@rebuild.com</span>
               </a>
               
               <a 
-                href="https://www.rebuild.fit/" 
+                href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="flex items-center group"
@@ -155,7 +155,7 @@ const Footer = () => {
                 <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gym-gray-dark shadow-sm border border-gym-gray-light text-gym-yellow mr-3 group-hover:bg-gym-yellow/20 group-hover:text-gym-yellow group-hover:shadow-[0_0_10px_rgba(255,243,24,0.3)] transition-all duration-300">
                   <Globe className="h-4 w-4" />
                 </div>
-                <span className="text-white/80 group-hover:text-gym-yellow transition-colors">www.rebuild.fit</span>
+                <span className="text-white/80 group-hover:text-gym-yellow transition-colors">Rebuild Womens</span>
               </a>
             </div>
           </div>

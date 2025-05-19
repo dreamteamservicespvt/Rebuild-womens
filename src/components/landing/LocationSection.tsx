@@ -155,7 +155,7 @@ const LocationSection = () => {
               <div className="absolute inset-0 border border-white/10 rounded-xl z-10 pointer-events-none"></div>
               
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3827.0279542821863!2d82.2356389!3d16.5677778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a37a544d3f881df%3A0x90e8c310f0e705a0!2sBalaji%20Cheruvu%20Center%2C%20Kakinada%2C%20Andhra%20Pradesh%20533001!5e0!3m2!1sen!2sin!4v1652343678954!5m2!1sen!2sin" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3856.2037697179203!2d82.22612179678953!3d16.952446100000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a38272b88c72afb%3A0x638b9a205f1003d4!2sRebuild%20fitness%20gym!5e1!3m2!1sen!2sin!4v1747633980391!5m2!1sen!2sin"
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
@@ -163,14 +163,19 @@ const LocationSection = () => {
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Rebuild Fitness Location"
-                className="grayscale hover:grayscale-0 transition-all duration-700 h-full w-full"
+                className="transition-transform duration-700 h-full w-full hover:scale-105"
               ></iframe>
-              
+
               {/* Address pill overlay */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gym-gray-dark/90 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-medium shadow-lg z-20 text-gym-yellow flex items-center">
+              <a 
+                href="https://maps.google.com/?q=Rebuild+Fitness+Gym+Kakinada" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gym-gray-dark/90 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-medium shadow-lg z-20 text-gym-yellow flex items-center hover:bg-gym-gray-dark hover:text-gym-yellow/90 transition-colors duration-300"
+              >
                 <MapPin className="h-3 w-3 mr-1.5" />
-                <span>Rebuild Fitness, Balaji Cheruvu Center</span>
-              </div>
+                <span>Rebuild Fitness, Pindirolu Vari Street</span>
+              </a>
               
               {/* Floating action buttons */}
               <div className="absolute top-4 right-4 z-20">
@@ -251,7 +256,7 @@ const LocationSection = () => {
                   <div className="h-8 w-8 bg-white/20 rounded-full flex items-center justify-center mr-3">
                     <Check className="h-4 w-4" />
                   </div>
-                  <span></span>
+                  <span>Experienced Women's Trainer</span>
                 </li>
                 <li className="flex items-center">
                   <div className="h-8 w-8 bg-white/20 rounded-full flex items-center justify-center mr-3">
