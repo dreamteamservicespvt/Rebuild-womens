@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
@@ -77,11 +76,15 @@ const UPIQRCode = ({ amount, paymentDescription, onComplete }: UPIQRCodeProps) =
       </CardContent>
       
       <CardFooter className="flex flex-col gap-3 pt-0">
+        {/* Fixed UPI button with high contrast styling */}
         <Button 
-          className="w-full bg-rebuild-purple hover:bg-rebuild-purple/90" 
+          className="w-full bg-gym-yellow text-black font-bold py-6 px-4 rounded-md hover:bg-gym-yellow/90 hover:shadow-[0_0_15px_rgba(255,243,24,0.6)] transition-all duration-300"
           onClick={() => window.open(`${upiString}`, "_blank")}
         >
-          Pay with UPI App
+          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0L2.869 16.629 12 21.693l9.131-5.064L12 0zm0 19.813l-7.143-3.971L12 2.867l7.143 12.975L12 19.813z"/>
+          </svg>
+          PAY WITH UPI APP
         </Button>
         
         {onComplete && (

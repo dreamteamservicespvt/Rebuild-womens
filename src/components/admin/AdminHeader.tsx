@@ -23,7 +23,7 @@ const AdminHeader = () => {
     <header className="bg-gym-gray-dark border-b border-gym-gray-light py-4">
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gym-yellow font-heading">Rebuild Fitness Admin</h1>
+          <h1 className="text-2xl font-bold text-gym-yellow font-heading">Rebuild Women Admin</h1>
           <p className="text-white/70 text-sm">Manage your women's fitness program</p>
         </div>
         

@@ -26,18 +26,19 @@ const MOBILE_IMAGES = [
   "https://images.unsplash.com/photo-1595078475328-1ab05d0a6a0e"
 ];
 
-// Inspirational quotes for typewriter effect
+// Inspirational quotes for typewriter effect - Updated with more powerful messages
 const QUOTES = [
-  "This isn't just weight loss — this is your rebuild.",  
-  "You're not starting over. You're rebuilding stronger.",  
-  "Rebuild your body. Reclaim your confidence.",  
-  "Every drop of sweat is one step closer to the woman you're becoming.",  
-  "Strong isn't a size. It's a mindset. Rebuild it.",  
-  "You didn't come this far to only come this far. Keep rebuilding.",  
-  "Fall in love with the process. Watch yourself rebuild, day by day.",  
-  "Transformation isn't found. It's rebuilt.",  
-  "Rebuild is more than fitness. It's who you choose to become.",  
-  "What you rebuild today becomes your strength tomorrow."
+  "Transform your body. Transform your life. This is your rebuild.",
+  "Fitness isn't just about losing weight—it's about gaining strength.",
+  "Every session brings you closer to the strongest version of yourself.",
+  "Your body hears everything your mind says. Stay positive. Stay strong.",
+  "The woman you're becoming will thank the woman who's working hard now.",
+  "Your only competition is the woman you were yesterday.",
+  "Sweat now, shine later. Your rebuild journey starts here.",
+  "When you feel like quitting, remember why you started.",
+  "Strong women lift each other up—mentally, emotionally, physically.",
+  "This is your space to rebuild, redefine, and reclaim your power.",
+  "Fitness is not about being better than someone else—it's about being better than you used to be."
 ];
 
 // Typewriter Component
@@ -91,8 +92,9 @@ const TypewriterQuote = () => {
     let result = text;
     
     keywords.forEach(keyword => {
-      // Case insensitive replace with span
-      const regex = new RegExp(`(${keyword})`, 'gi');
+      // Case insensitive replace with span, escape special regex characters
+      const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${safeKeyword})`, 'gi');
       result = result.replace(regex, '<span class="text-gym-yellow">$1</span>');
     });
     
@@ -131,11 +133,11 @@ const HeroSection = () => {
       />
       
       {/* Enhanced overlay with further reduced opacity */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/20 z-[1]"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30 z-[1]"></div>
       
       <div className="container-custom relative z-10 flex justify-start items-center h-full">
         <div className="max-w-4xl mt-16 sm:mt-16 md:mt-12 px-4 sm:px-6 md:px-8 py-4 sm:py-10 md:py-12 relative text-left">
-          {/* Main headline - Adjusted for mobile */}
+          {/* Main headline - Updated for more impact */}
           <motion.h1 
             className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic leading-tight sm:leading-tight tracking-wider"
             initial={{ opacity: 0, y: 20 }}
@@ -143,19 +145,19 @@ const HeroSection = () => {
             transition={{ duration: 0.8 }}
           >
             <span className="block text-[24px] sm:text-5xl leading-tight mb-2 tracking-wider font-[900] italic">
-              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">REBUILD'S</span>{' '}
-              <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">WEIGHT LOSS</span>{' '}
-              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">PROGRAM</span>
+              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">TRANSFORM</span>{' '}
+              <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">YOUR</span>{' '}
+              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">BODY</span>
             </span> 
             <span className="text-[20px] sm:text-4xl tracking-wider font-[900] italic">
-              <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">EXCLUSIVE</span>{' '}
-              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">WOMEN'S</span>{' '}
+              <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">IN A SPACE</span>{' '}
+              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">DESIGNED</span>{' '}
               <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">FOR</span>{' '}
-              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">FITNESS</span>
+              <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">WOMEN</span>
             </span>
           </motion.h1>
 
-          {/* Subheadline - Adjusted for mobile */}
+          {/* Subheadline - Updated with more benefits */}
           <motion.p 
             className="font-heading text-sm sm:text-xl md:text-2xl mt-3 sm:mt-6 mb-2 sm:mb-3 tracking-wide text-white/90
                      font-medium [text-shadow:0_2px_10px_rgba(0,0,0,0.5)]"
@@ -163,18 +165,20 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            Experienced Female Coaches • Flexible Timings • First Session Free
+            Expert Female Trainers • Personalized Programs • Women-Only Environment
           </motion.p>
 
-          {/* Offer line - Fitted background with reduced spacing */}
+          {/* Offer line - Updated with clearer pricing structure */}
           <motion.div
             className="inline-block bg-gym-yellow/20 backdrop-blur-sm border border-gym-yellow/50 rounded-lg py-2 px-3 sm:px-4 mt-2 sm:mt-4 mb-6 sm:mb-8"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            <p className="text-xs leading-snug sm:text-sm font-medium whitespace-nowrap">
-              Limited Offer: <span className="text-gym-yellow font-bold animate-pulse">50% OFF</span> for First 20 Sign-Ups 
+            <p className="text-xs leading-snug sm:text-sm font-medium whitespace-normal">
+              <span className="text-white/90">Limited Time Offer:</span> <span className="text-gym-yellow font-semibold">25% OFF</span> on All Programs
+              <br className="hidden sm:block" />
+              <span className="text-white/80">Morning (5:30AM-10:30AM) & Evening (4PM-8PM) Sessions</span>
             </p>
           </motion.div>
 
@@ -186,7 +190,7 @@ const HeroSection = () => {
               style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}
               onClick={() => scrollToSection('join')}
             >
-              <span className="relative z-10 text-sm sm:text-xl">JOIN NOW</span>
+              <span className="relative z-10 text-sm sm:text-xl">START TODAY</span>
               <span className="absolute inset-0 bg-black/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
             </Button>
             
@@ -197,7 +201,7 @@ const HeroSection = () => {
               style={{ animationDelay: "1s", animationFillMode: "forwards" }}
               onClick={() => scrollToSection('sessions')}
             >
-              <span className="relative z-10 text-sm sm:text-xl">EXPLORE</span>
+              <span className="relative z-10 text-sm sm:text-xl">VIEW PROGRAMS</span>
               <span className="absolute inset-0 transform scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-300"></span>
             </Button>
           </div>
@@ -212,8 +216,8 @@ const HeroSection = () => {
           
         </div>
       </div>
-
-      {/* Bottom center quotes section - Minimal styling */}
+      
+      {/* Bottom center quotes section with typewriter animation */}
       <div className="absolute bottom-20 sm:bottom-16 left-0 right-0 z-20">
         <motion.div
           className="max-w-lg mx-auto px-3 sm:px-4"

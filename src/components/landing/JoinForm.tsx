@@ -76,8 +76,21 @@ const JoinForm = () => {
       const json = await res.json();
       setFormData(prev => ({ ...prev, screenshotUrl: json.secure_url }));
       toast({ title: "Uploaded!", description: "Screenshot saved." });
-    } catch {
-      toast({ variant: "destructive", title: "Upload failed" });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Upload failed";
+      toast({ 
+        variant: "destructive", 
+        title: "Upload failed",
+        description: errorMessage
+      });
+      
+      // Log error safely in production
+      if (process.env.NODE_ENV === "production") {
+        // errorTrackingService.logError({
+        //   action: "uploadScreenshot",
+        //   error: errorMessage
+        // });
+      }
     } finally {
       setLoading(false);
     }
@@ -97,13 +110,25 @@ const JoinForm = () => {
         title: "Form submitted successfully!",
         description: "Please complete your payment to secure your spot.",
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      // Improve error handling with typed error and toast
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "An unexpected error occurred";
+      
       toast({
         variant: "destructive",
-        title: "Something went wrong",
-        description: "Please try again later.",
+        title: "Form submission failed",
+        description: errorMessage
       });
-      console.error("Error submitting form:", error);
+      
+      // For monitoring, log the error to a service in production 
+      if (process.env.NODE_ENV === "production") {
+        // errorLoggingService.logError(error);
+      } else {
+        // Only in development
+        console.warn("Form submission error:", errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -270,12 +295,13 @@ const JoinForm = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {/* Morning slots */}
-                  <SelectItem value="morning-1">8:00 AM - 9:00 AM (Morning)</SelectItem>
-                  <SelectItem value="morning-2">9:00 AM - 10:10 AM (Morning)</SelectItem>
+                  <SelectItem value="weight-morning">6:00 AM - 10:00 AM (Weight Loss)</SelectItem>
+                  <SelectItem value="strength-morning">5:30 AM - 10:30 AM (Strength)</SelectItem>
                   
                   {/* Evening slots */}
-                  <SelectItem value="evening-1">3:00 PM - 4:00 PM (Evening)</SelectItem>
-                  <SelectItem value="evening-2">4:00 PM - 5:00 PM (Evening)</SelectItem>
+                  <SelectItem value="weight-evening">4:00 PM - 8:00 PM (Weight Loss)</SelectItem>
+                  <SelectItem value="strength-evening">4:00 PM - 8:00 PM (Strength)</SelectItem>
+                  <SelectItem value="zumba-evening">4:00 PM - 8:00 PM (Zumba)</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -375,7 +401,7 @@ const JoinForm = () => {
 
             {/* Messages */}
             <div className="space-y-2 text-center text-gray-700 mb-8">
-              <p>You've successfully joined our weight loss program.</p>
+              <p>You've successfully joined our fitness program.</p>
               <p>Our team will contact you soon with more details about your first session.</p>
             </div>
 

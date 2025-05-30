@@ -7,7 +7,9 @@ A website for Rebuild Fitness - a women-only weight loss fitness center in Kakin
 - Registration with UPI payment integration
 - Flexible session scheduling
 - Admin dashboard for managing bookings
-- Dynamic pricing options
+- Dynamic pricing and discounts management
+- Coupon code system with tracking
+- Full CRUD operations for all services
 - Responsive design for all devices
 
 ## Technologies Used
@@ -30,3 +32,13 @@ npm install
 # Start development server
 npm run dev
 ```
+
+## Admin Features
+
+The admin dashboard provides comprehensive management capabilities:
+
+- Booking management with status tracking
+- Dynamic pricing controls with instant website updates
+- Coupon code generation and management
+- Service creation, editing and deletion
+- User-friendly interface for non-technical administrators

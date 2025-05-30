@@ -60,12 +60,33 @@ const ImageSlideshow = ({
           resolve();
         };
         img.onerror = () => {
+          // Handle image loading errors silently
           setImagesLoaded(prev => {
             const newState = [...prev];
-            newState[index] = true; // Mark as loaded even on error to avoid hanging
+            newState[index] = true;
             return newState;
           });
           resolve();
+          
+          // Log to monitoring in production using a more controlled approach
+          if (process.env.NODE_ENV === "production") {
+            // Using a safer logging method that doesn't rely on console.error
+            const errorInfo = {
+              type: "IMAGE_LOAD_ERROR",
+              source: src,
+              component: "ImageSlideshow"
+            };
+            
+            // If there's a monitoring service available, use it instead
+            // errorTrackingService.logEvent(errorInfo);
+            
+            // Fallback to a minimal console warning that doesn't interrupt execution
+            try {
+              console.warn("Failed to load image:", errorInfo);
+            } catch (e) {
+              // Suppress any console errors
+            }
+          }
         };
         img.src = src;
       });
