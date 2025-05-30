@@ -310,11 +310,56 @@
 /* Optimize animations for mobile */
 @media (max-width: 768px) {
   .animate-slide-up {
-    animation-duration: 0.5s;
+    animation-duration: 0.5s; /* Faster on mobile */
   }
   
   .animate-height-increase {
-    animation-duration: 0.6s;
+    animation-duration: 0.6s; /* Faster on mobile */
+  }
+  
+  /* Mobile-specific optimized animations */
+  @keyframes mobile-slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .mobile-animate-slide-in-right {
+    animation: mobile-slide-in-right 0.3s ease-out forwards;
+  }
+  
+  /* Smoother transitions for mobile UI */
+  .mobile-transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+  
+  /* Mobile-optimized slide transitions */
+  .mobile-slide-up {
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  
+  .mobile-slide-up.active {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  /* Optimized fade for mobile dialogs */
+  .mobile-fade {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .mobile-fade.active {
+    opacity: 1;
   }
 }
 
