@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
@@ -225,6 +225,7 @@ export const useFirebase = () => {
 export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [totalRedemptions, setTotalRedemptions] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -515,106 +516,112 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Implement validateCoupon method
+  // Validate coupon function
   const validateCoupon = async (code: string, serviceId: string) => {
     try {
-      // Normalize coupon code to uppercase for consistency
-      const normalizedCode = code.toUpperCase();
+      // Standardize the code format
+      const formattedCode = code.trim().toUpperCase();
       
-      // First check if total redemptions across all services is below 30
-      const allRedemptionsSnapshot = await getDocs(collection(db, "couponRedemptions"));
-      const totalRedemptions = allRedemptionsSnapshot.size;
-      
+      // If we've reached the global limit of 30 redemptions, no more coupons can be used
       if (totalRedemptions >= 30) {
         return { 
           valid: false, 
-          discountedPrice: 0, 
-          message: "Coupon limit reached: Only available for the first 30 members across all services." 
+          message: "All coupons have been exhausted. No more redemptions available.",
+          discountedPrice: 0 
         };
       }
       
-      // Continue with regular coupon validation
-      const couponRef = doc(db, "coupons", normalizedCode);
-      const couponSnap = await getDoc(couponRef);
+      // Query the coupon by code
+      const couponsRef = collection(db, "coupons");
+      const q = query(couponsRef, where("code", "==", formattedCode));
+      const querySnapshot = await getDocs(q);
       
-      if (!couponSnap.exists()) {
-        return { valid: false, discountedPrice: 0, message: "Invalid coupon code" };
+      if (querySnapshot.empty) {
+        return { 
+          valid: false, 
+          message: "Invalid coupon code", 
+          discountedPrice: 0 
+        };
       }
       
-      const couponData = couponSnap.data() as CouponType;
+      // Get the first matching coupon
+      const couponDoc = querySnapshot.docs[0];
+      const couponData = couponDoc.data() as CouponType;
       
-      // Check if the coupon is active
+      // Check if coupon is active
       if (couponData.status !== 'active') {
-        return { valid: false, discountedPrice: 0, message: "This coupon is currently inactive" };
+        return { 
+          valid: false, 
+          message: "This coupon is inactive", 
+          discountedPrice: 0 
+        };
       }
       
-      // Check if coupon is expired
-      if (couponData.expiryDate && new Date(couponData.expiryDate.toDate()) < new Date()) {
-        return { valid: false, discountedPrice: 0, message: "Coupon has expired" };
+      // Check if coupon has expired
+      if (couponData.expiryDate && new Date() > couponData.expiryDate.toDate()) {
+        return { 
+          valid: false, 
+          message: "This coupon has expired", 
+          discountedPrice: 0 
+        };
       }
       
-      // Check if maximum usage has been reached
-      if (couponData.maxRedemptions && couponData.usageCount >= couponData.maxRedemptions) {
-        return { valid: false, discountedPrice: 0, message: "Coupon usage limit reached" };
+      // Check if coupon has reached its maximum redemptions
+      if (couponData.usageCount >= couponData.maxRedemptions) {
+        return { 
+          valid: false, 
+          message: "This coupon has reached its maximum number of uses", 
+          discountedPrice: 0 
+        };
       }
       
-      // Check if the coupon applies to the selected service
-      if (couponData.applicableServices && 
-          couponData.applicableServices.length > 0 && 
+      // Check if the coupon is applicable to this service
+      if (couponData.applicableServices.length > 0 && 
           !couponData.applicableServices.includes(serviceId)) {
-        return { valid: false, discountedPrice: 0, message: "Coupon not applicable to selected service" };
+        return { 
+          valid: false, 
+          message: "This coupon is not applicable for the selected service", 
+          discountedPrice: 0 
+        };
       }
       
-      // Get the service from Firebase to get the actual base price
-      let servicePrice;
-      let finalPrice;
+      // Get service details to determine correct discounted price
+      const serviceDoc = await getDoc(doc(db, "services", serviceId));
       
-      try {
-        const serviceRef = doc(db, "services", serviceId);
-        const serviceSnap = await getDoc(serviceRef);
-        
-        if (serviceSnap.exists()) {
-          const serviceData = serviceSnap.data() as ServiceType;
-          servicePrice = serviceData.basePrice;
-          
-          // Calculate discounted price based on coupon type
-          if (couponData.discountType === 'percentage') {
-            finalPrice = servicePrice - (servicePrice * (couponData.discountValue / 100));
-          } else {
-            finalPrice = servicePrice - couponData.discountValue;
-            if (finalPrice < 0) finalPrice = 0;
-          }
-        } else {
-          // Fallback to hardcoded prices
-          switch(serviceId) {
-            case "weight-loss":
-              servicePrice = 4000;
-              finalPrice = 3000;
-              break;
-            case "strength":
-              servicePrice = 1800;
-              finalPrice = 1500;
-              break;
-            case "zumba":
-              servicePrice = 2000;
-              finalPrice = 1500;
-              break;
-            default:
-              return { valid: false, discountedPrice: 0, message: "Invalid service selected" };
-          }
-        }
-      } catch (error) {
-        return { valid: false, discountedPrice: 0, message: "Failed to validate coupon" };
+      if (!serviceDoc.exists()) {
+        return { 
+          valid: false, 
+          message: "Service not found", 
+          discountedPrice: 0 
+        };
       }
       
-      return { 
-        valid: true, 
-        discountedPrice: finalPrice,
-        message: `Coupon ${code} applied successfully!`
+      const serviceData = serviceDoc.data() as ServiceType;
+      let discountedPrice = serviceData.discountedPrice || serviceData.basePrice;
+      
+      // Fixed discounted prices based on service type
+      if (serviceId.includes("weight") || serviceData.title.toLowerCase().includes("weight loss")) {
+        discountedPrice = 3000; // Weight Loss: ₹3000 (Regular ₹4000)
+      } else if (serviceId.includes("strength") || serviceData.title.toLowerCase().includes("strength")) {
+        discountedPrice = 1500; // Strength Training: ₹1500 (Regular ₹1800)
+      } else if (serviceId.includes("zumba") || serviceData.title.toLowerCase().includes("zumba")) {
+        discountedPrice = 1500; // Zumba: ₹1500 (Regular ₹2000)
+      }
+      
+      return {
+        valid: true,
+        message: "Coupon applied successfully!",
+        discountedPrice: discountedPrice,
+        originalPrice: serviceData.basePrice,
+        couponId: couponDoc.id
       };
     } catch (error) {
       console.error("Error validating coupon:", error);
-      return { valid: false, discountedPrice: 0, message: "Failed to validate coupon" };
+      return { 
+        valid: false, 
+        message: "Error validating coupon. Please try again.", 
+        discountedPrice: 0 
+      };
     }
   };
 
@@ -935,6 +942,18 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Add handling for totalRedemptions in the Firebase context
+  const getTotalRedemptions = useCallback(async () => {
+    try {
+      const redemptionsSnapshot = await getDocs(collection(db, "couponRedemptions"));
+      setTotalRedemptions(redemptionsSnapshot.size);
+      return redemptionsSnapshot.size;
+    } catch (error) {
+      // Handle error silently - don't use console.error
+      return 0;
+    }
+  }, [db]);
+
   const value = {
     user,
     loading,
@@ -972,7 +991,9 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     updateTrainer,
     deleteTrainer,
     getActiveCoupon,
-    getAllCoupons
+    getAllCoupons,
+    totalRedemptions,
+    getTotalRedemptions
   };
 
   return (

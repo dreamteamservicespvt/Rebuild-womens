@@ -47,14 +47,14 @@ const TypewriterQuote = () => {
   const [text, setText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isBlinking, setIsBlinking] = useState(true);
-  
+
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-    
+
     const typeSpeed = 60; // milliseconds per character for typing
     const deleteSpeed = 30; // milliseconds per character for deleting
     const pauseTime = 1800; // milliseconds to pause after finishing typing
-    
+
     if (isDeleting) {
       // Delete characters
       if (text.length > 0) {
@@ -82,29 +82,29 @@ const TypewriterQuote = () => {
         }, pauseTime);
       }
     }
-    
+
     return () => clearTimeout(timeout);
   }, [text, currentQuote, isDeleting]);
-  
+
   // Format text with highlighted keywords
   const formattedText = () => {
     const keywords = ["rebuild", "Rebuild", "strong", "stronger", "confidence", "transformation"];
     let result = text;
-    
+
     keywords.forEach(keyword => {
       // Case insensitive replace with span, escape special regex characters
       const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`(${safeKeyword})`, 'gi');
       result = result.replace(regex, '<span class="text-gym-yellow">$1</span>');
     });
-    
+
     return result;
   };
-  
+
   return (
     <div className="font-mono text-xs sm:text-sm text-white/80 min-h-[40px] relative flex items-center justify-center">
-      <span 
-        className="inline-block" 
+      <span
+        className="inline-block"
         dangerouslySetInnerHTML={{ __html: formattedText() }}
       />
       <span className={`h-4 w-0.5 bg-gym-yellow ml-1 inline-block ${isBlinking ? 'animate-blink' : ''}`}></span>
@@ -123,32 +123,48 @@ const HeroSection = () => {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center text-white">
       <NavigationBar />
-      
-      <ImageSlideshow 
-        images={DESKTOP_IMAGES} 
+
+      <ImageSlideshow
+        images={DESKTOP_IMAGES}
         mobileImages={MOBILE_IMAGES}
-        interval={6000} 
+        interval={6000}
         pauseOnHover={true}
         enableKenBurns={true}
       />
-      
+
       {/* Enhanced overlay with further reduced opacity */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30 z-[1]"></div>
-      
+
       <div className="container-custom relative z-10 flex justify-start items-center h-full">
         <div className="max-w-4xl mt-16 sm:mt-16 md:mt-12 px-4 sm:px-6 md:px-8 py-4 sm:py-10 md:py-12 relative text-left">
           {/* Main headline - Updated for more impact */}
-          <motion.h1 
+          <motion.h1
             className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic leading-tight sm:leading-tight tracking-wider"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
+            {/* Premium REBUILD text for mobile only */}
+            <div className="sm:hidden mb-3 relative">
+              <div className="relative inline-block">
+                {/* Modified glow effect to only apply behind text */}
+                <span className="absolute -inset-y-1 -inset-x-2 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow/50 to-gym-yellow/30 blur-lg rounded-md"></span>
+                <span className="relative block text-[32px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
+                       [text-shadow:0_0_10px_rgba(255,243,24,0.5),3px_3px_0px_rgba(0,0,0,0.8)] py-1 px-1">
+                  <span className="relative inline-block after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] 
+                         after:bg-gradient-to-r after:from-transparent after:via-gym-yellow after:to-transparent">
+                    REBUILD
+                  </span>
+                </span>
+              </div>
+              <div className="absolute -bottom-1 left-0 w-[80px] h-[3px] bg-gym-yellow/70 rounded-full"></div>
+            </div>
+
             <span className="block text-[24px] sm:text-5xl leading-tight mb-2 tracking-wider font-[900] italic">
               <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">TRANSFORM</span>{' '}
               <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">YOUR</span>{' '}
               <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">BODY</span>
-            </span> 
+            </span>
             <span className="text-[20px] sm:text-4xl tracking-wider font-[900] italic">
               <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">IN A SPACE</span>{' '}
               <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">DESIGNED</span>{' '}
@@ -158,7 +174,7 @@ const HeroSection = () => {
           </motion.h1>
 
           {/* Subheadline - Updated with more benefits */}
-          <motion.p 
+          <motion.p
             className="font-heading text-sm sm:text-xl md:text-2xl mt-3 sm:mt-6 mb-2 sm:mb-3 tracking-wide text-white/90
                      font-medium [text-shadow:0_2px_10px_rgba(0,0,0,0.5)]"
             initial={{ opacity: 0, y: 20 }}
@@ -178,14 +194,14 @@ const HeroSection = () => {
             <p className="text-xs leading-snug sm:text-sm font-medium whitespace-normal">
               <span className="text-white/90">Limited Time Offer:</span> <span className="text-gym-yellow font-semibold">25% OFF</span> on All Programs
               <br className="hidden sm:block" />
-              <span className="text-white/80">Morning (5:30AM-10:30AM) & Evening (4PM-8PM) Sessions</span>
+              <span className="text-white/80"> Morning (5:30AM-10:30AM) & Evening (4PM-8PM) Sessions</span>
             </p>
           </motion.div>
 
           {/* Button container - Adjusted for mobile row layout */}
           <div className="flex flex-row gap-2 sm:gap-5 justify-between w-full sm:max-w-md">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="flex-1 text-base sm:text-lg bg-gym-yellow hover:bg-gym-yellow/90 text-black relative overflow-hidden group shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,243,24,0.4)] animate-slide-up opacity-0 py-4 sm:py-6 font-bold tracking-wide"
               style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}
               onClick={() => scrollToSection('join')}
@@ -193,10 +209,10 @@ const HeroSection = () => {
               <span className="relative z-10 text-sm sm:text-xl">START TODAY</span>
               <span className="absolute inset-0 bg-black/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
             </Button>
-            
-            <Button 
-              size="lg" 
-              variant="outline" 
+
+            <Button
+              size="lg"
+              variant="outline"
               className="flex-1 text-base sm:text-lg border-2 border-white/80 text-white hover:text-white hover:border-gym-yellow bg-transparent hover:bg-gym-yellow/20 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,243,24,0.3)] animate-slide-up opacity-0 py-4 sm:py-6 font-bold tracking-wide"
               style={{ animationDelay: "1s", animationFillMode: "forwards" }}
               onClick={() => scrollToSection('sessions')}
@@ -205,18 +221,18 @@ const HeroSection = () => {
               <span className="absolute inset-0 transform scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-300"></span>
             </Button>
           </div>
-          
+
           {/* Decorative divider between content and quotes */}
-          <motion.div 
+          <motion.div
             className="w-32 h-1 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow to-gym-yellow/30 my-10 rounded-full shadow-[0_0_10px_rgba(255,243,24,0.4)]"
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 128, opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.6 }}
           />
-          
+
         </div>
       </div>
-      
+
       {/* Bottom center quotes section with typewriter animation */}
       <div className="absolute bottom-20 sm:bottom-16 left-0 right-0 z-20">
         <motion.div
@@ -228,7 +244,7 @@ const HeroSection = () => {
           <TypewriterQuote />
         </motion.div>
       </div>
-      
+
       {/* Scroll indicator - Hidden on mobile */}
       <div className="hidden sm:flex absolute bottom-[4.5rem] sm:bottom-6 md:bottom-8 right-3 sm:right-6 md:right-8 flex-col items-center justify-center animate-pulse z-30">
         <span className="text-white/70 text-xs sm:text-sm mb-1 sm:mb-2 animate-fade-in opacity-0" style={{ animationDelay: "1.6s", animationFillMode: "forwards" }}>

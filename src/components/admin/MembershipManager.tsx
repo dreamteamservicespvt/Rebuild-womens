@@ -75,6 +75,55 @@ const defaultServices: Omit<ServiceType, 'id'>[] = [
   }
 ];
 
+// Fallback services in case Firebase fetch fails
+const fallbackServices = [
+  {
+    id: "strength",
+    title: "Strength Training",
+    basePrice: 1800,
+    discountedPrice: 1500,  // Fixed coupon price
+    trainer: "Revathi",
+    features: [
+      "Build lean muscle",
+      "Morning: 5:30AM to 10:30AM",
+      "Evening: 4:00PM to 8:00PM",
+      "Women-only environment",
+      "Specialized equipment",
+      "Form correction & guidance"
+    ]
+  },
+  {
+    id: "weight-loss",
+    title: "Weight Loss Program",
+    basePrice: 4000,
+    discountedPrice: 3000,  // Fixed coupon price
+    trainer: "Revathi",
+    features: [
+      "Personalized workout plans",
+      "Nutrition guidance",
+      "Women-only environment",
+      "Morning: 6:00AM to 10:00AM",
+      "Evening: 4:00PM to 8:00PM",
+      "Progress tracking"
+    ]
+  },
+  {
+    id: "zumba",
+    title: "Zumba",
+    basePrice: 2000,
+    discountedPrice: 1500,  // Fixed coupon price
+    trainer: "Jyothi",
+    features: [
+      "Fun dance workouts",
+      "Burn calories with music",
+      "Improve coordination",
+      "Suitable for all fitness levels",
+      "Women-only environment",
+      "Evening sessions: 4:00PM to 8:00PM"
+    ]
+  }
+];
+
 const MembershipManager = () => {
   const { getServices, updateService, createService, deleteService } = useFirebase();
   const { toast } = useToast();
@@ -134,25 +183,47 @@ const MembershipManager = () => {
         ds => !existingServiceTitles.includes(ds.title.toLowerCase().trim())
       );
       
-      if (missingServices.length === 0) {
-        toast({
-          title: "Already Synchronized",
-          description: "All default services already exist in the database."
-        });
-        setIsSynchronizing(false);
-        return;
+      // Also check if existing core services have the correct discounted prices
+      const servicesToUpdate = currentServices.filter(service => {
+        const matchingDefault = defaultServices.find(
+          ds => ds.title.toLowerCase().trim() === service.title.toLowerCase().trim()
+        );
+        
+        return matchingDefault && 
+          (service.basePrice !== matchingDefault.basePrice || 
+           service.discountedPrice !== matchingDefault.discountedPrice);
+      });
+      
+      // Update existing services with correct prices
+      for (const service of servicesToUpdate) {
+        const matchingDefault = defaultServices.find(
+          ds => ds.title.toLowerCase().trim() === service.title.toLowerCase().trim()
+        );
+        
+        if (matchingDefault) {
+          await updateService(service.id, {
+            basePrice: matchingDefault.basePrice,
+            discountedPrice: matchingDefault.discountedPrice
+          });
+        }
       }
       
       // Create missing services
-      let createdCount = 0;
       for (const service of missingServices) {
         await createService(service);
-        createdCount++;
+      }
+      
+      const message = [];
+      if (missingServices.length > 0) {
+        message.push(`Added ${missingServices.length} missing service${missingServices.length > 1 ? 's' : ''}`);
+      }
+      if (servicesToUpdate.length > 0) {
+        message.push(`Updated ${servicesToUpdate.length} service${servicesToUpdate.length > 1 ? 's' : ''} with correct pricing`);
       }
       
       toast({
         title: "Synchronization Complete",
-        description: `Successfully added ${createdCount} missing service${createdCount > 1 ? 's' : ''}.`
+        description: message.length > 0 ? message.join(', ') + '.' : "All services are already up to date."
       });
       
       // Refresh services
@@ -162,7 +233,7 @@ const MembershipManager = () => {
       toast({
         variant: "destructive",
         title: "Synchronization Failed",
-        description: "Could not add default services. Please try again."
+        description: "Could not add/update default services. Please try again."
       });
     } finally {
       setIsSynchronizing(false);

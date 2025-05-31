@@ -153,6 +153,8 @@ const JoinFormSection = () => {
       
       if (result.valid) {
         setCouponValid(true);
+        
+        // Ensure we're setting the fixed discounted price returned from the validateCoupon function
         setFinalPrice(result.discountedPrice);
         
         // Calculate savings amount
@@ -177,7 +179,7 @@ const JoinFormSection = () => {
         });
       }
     } catch (error) {
-      console.error("Error in coupon validation:", error);
+      // Silent error handling - log to monitoring service in production
       setCouponApplied(false);
       setCouponValid(false);
       

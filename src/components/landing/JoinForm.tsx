@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge"; // Add missing Badge import
 import { 
   Select, 
   SelectContent, 
@@ -13,7 +14,15 @@ import {
 import { toast } from "@/hooks/use-toast";
 import UpiQRCode from "@/components/UpiQRCode";
 import { useFirebase } from "@/contexts/FirebaseContext";
-import { Instagram, Home, Phone, CheckCircle2, ArrowRight } from "lucide-react";
+import { 
+  Instagram, 
+  Home, 
+  Phone, 
+  CheckCircle2, 
+  ArrowRight,
+  Camera, // Replace CameraPlus with Camera
+  Loader2
+} from "lucide-react";
 
 // Animation variants
 const fadeIn = {
@@ -38,9 +47,15 @@ const steps = [
 ];
 
 const JoinForm = () => {
-  const { addBooking, getPriceConfig } = useFirebase();
+  const { addBooking, getPriceConfig, validateCoupon } = useFirebase();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  // Add service selection state
+  const [selectedService, setSelectedService] = useState<any>(null);
+  
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -49,8 +64,10 @@ const JoinForm = () => {
     session: "",
     message: "",
     price: 0,
+    originalPrice: 0,
     paid: false,
-    screenshotUrl: ""    // <— add
+    screenshotUrl: "",
+    couponCode: "" // Add missing couponCode field
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -60,6 +77,30 @@ const JoinForm = () => {
 
   const handleSelectChange = (value: string, field: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // When session changes, also update the selected service
+    if (field === "session") {
+      // Here you would ideally look up the service details
+      // For now we'll simulate with dummy data
+      const serviceMap: Record<string, any> = {
+        "weight-morning": { title: "Weight Loss (Morning)", basePrice: 4000, trainer: "Revathi" },
+        "strength-morning": { title: "Strength Training (Morning)", basePrice: 1800, trainer: "Revathi" },
+        "weight-evening": { title: "Weight Loss (Evening)", basePrice: 4000, trainer: "Revathi" },
+        "strength-evening": { title: "Strength Training (Evening)", basePrice: 1800, trainer: "Revathi" },
+        "zumba-evening": { title: "Zumba (Evening)", basePrice: 2000, trainer: "Jyothi" }
+      };
+      
+      setSelectedService(serviceMap[value] || null);
+      
+      // Update price in form data
+      if (serviceMap[value]) {
+        setFormData(prev => ({ 
+          ...prev, 
+          price: serviceMap[value].basePrice,
+          originalPrice: serviceMap[value].basePrice
+        }));
+      }
+    }
   };
 
   const handleScreenshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +167,6 @@ const JoinForm = () => {
       if (process.env.NODE_ENV === "production") {
         // errorLoggingService.logError(error);
       } 
-      // Remove console warning about form submission error
     } finally {
       setLoading(false);
     }
@@ -143,7 +183,7 @@ const JoinForm = () => {
         preferredSlot: formData.session,
         paymentStatus: 'completed',
         price: formData.price,
-        screenshotUrl: formData.screenshotUrl   // <— include
+        screenshotUrl: formData.screenshotUrl
       });
       
       setStep(3);
@@ -157,9 +197,80 @@ const JoinForm = () => {
         title: "Payment registration failed",
         description: "Please contact us directly.",
       });
-      console.error("Error registering payment:", error);
+      // Handle error silently instead of console.error
+      if (process.env.NODE_ENV === "production") {
+        // errorLogService.log("Error registering payment", error);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const applyCouponCode = async () => {
+    if (!couponCode.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Missing coupon code",
+        description: "Please enter a coupon code to apply."
+      });
+      return;
+    }
+
+    setApplyingCoupon(true);
+    
+    try {
+      // Validate coupon with Firebase - make sure to pass the serviceId parameter
+      const serviceId = formData.session; // This should be the service ID
+      if (!serviceId) {
+        toast({
+          variant: "destructive", 
+          title: "Service required",
+          description: "Please select a service before applying a coupon."
+        });
+        return;
+      }
+      
+      const result = await validateCoupon(couponCode.trim(), serviceId);
+      
+      if (result.valid) {
+        // Apply the fixed discounted price returned by validateCoupon
+        // Use formData.price for originalPrice since it's not in the result
+        const originalPrice = selectedService?.basePrice || formData.price;
+        
+        setFormData(prev => ({
+          ...prev,
+          price: result.discountedPrice,
+          originalPrice: originalPrice,
+          couponApplied: true,
+          couponCode: couponCode.trim().toUpperCase()
+        }));
+        
+        // Calculate the savings amount
+        const savingsAmount = originalPrice - result.discountedPrice;
+        
+        toast({
+          title: "Coupon applied",
+          description: `You saved ₹${savingsAmount} with coupon ${couponCode.trim().toUpperCase()}`
+        });
+        
+        setCouponApplied(true);
+        setCouponCode(couponCode.trim().toUpperCase());
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Invalid coupon",
+          description: result.message || "This coupon code is invalid or has expired."
+        });
+      }
+    } catch (error) {
+      // Silent error handling - log to monitoring service in production
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to apply coupon. Please try again."
+      });
+    } finally {
+      setApplyingCoupon(false);
     }
   };
 
@@ -228,6 +339,22 @@ const JoinForm = () => {
     </div>
   );
 
+  useEffect(() => {
+    if (formData.session) {
+      // Reset coupon state when service changes
+      setCouponApplied(false);
+      setCouponCode("");
+      
+      // Update the form data with the selected service info
+      setFormData(prev => ({
+        ...prev,
+        service: formData.session,
+        price: formData.price, // Default to base price until coupon is applied
+        originalPrice: formData.price
+      }));
+    }
+  }, [formData.session]);
+
   return (
     <div className="max-w-md mx-auto p-6 sm:p-8">
       <ProgressBar />
@@ -241,7 +368,6 @@ const JoinForm = () => {
             animate="visible"
             exit="exit"
           >
-           
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
                 name="name"
@@ -298,7 +424,7 @@ const JoinForm = () => {
                   
                   {/* Evening slots */}
                   <SelectItem value="weight-evening">4:00 PM - 8:00 PM (Weight Loss)</SelectItem>
-                  <SelectItem value="strength-evening">4:00 PM - 8:00 PM (Strength)</SelectItem>
+                  <SelectItem value="strength-evening">5:00 PM - 9:00 PM (Strength)</SelectItem>
                   <SelectItem value="zumba-evening">4:00 PM - 8:00 PM (Zumba)</SelectItem>
                 </SelectContent>
               </Select>
@@ -307,21 +433,45 @@ const JoinForm = () => {
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                placeholder="Any specific requirements or questions? (Optional)"
+                placeholder="Additional Information (optional)"
                 className="bg-gym-gray-dark text-white border-gym-gray-light focus:border-gym-yellow focus:ring-gym-yellow/50"
               />
               
-              <Button 
-                type="submit" 
-                className="w-full bg-gym-yellow text-gym-black hover:bg-gym-yellow/90 group" 
+              {/* Price display with coupon applied status */}
+              <div className="py-4 px-6 bg-gym-gray rounded-lg mb-6">
+                <h3 className="font-medium text-white mb-2">Selected Plan</h3>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-gym-yellow font-medium text-lg">{selectedService?.title || "No plan selected"}</p>
+                    <p className="text-sm text-white/70">Trainer: {selectedService?.trainer}</p>
+                  </div>
+                  <div className="text-right">
+                    {couponApplied ? (
+                      <>
+                        <p className="text-sm text-white/60 line-through">₹{selectedService?.basePrice}</p>
+                        <p className="text-lg font-bold text-gym-yellow">₹{formData.price}</p>
+                        <Badge variant="outline" className="mt-1 text-xs border-gym-yellow text-gym-yellow">
+                          Coupon Applied: {formData.couponCode}
+                        </Badge>
+                      </>
+                    ) : (
+                      <p className="text-xl font-bold text-gym-yellow">₹{selectedService?.basePrice}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <Button
+                type="submit"
                 disabled={loading}
+                className="w-full bg-gym-yellow text-gym-black hover:bg-gym-yellow/90 transition-all py-4 flex items-center justify-center gap-2"
               >
-                {loading ? "Processing..." : (
-                  <>
-                    Submit & Proceed to Payment
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </>
+                {loading ? (
+                  <Loader2 className="animate-spin h-5 w-5" />
+                ) : (
+                  <ArrowRight className="h-5 w-5" />
                 )}
+                <span>{loading ? "Submitting..." : "Continue to Payment"}</span>
               </Button>
             </form>
           </motion.div>
@@ -335,31 +485,100 @@ const JoinForm = () => {
             animate="visible"
             exit="exit"
           >
-            <h3 className="text-2xl font-bold mb-6 text-gym-yellow text-center">Complete Your Payment</h3>
-            <p className="mb-6 text-center">Scan the QR code to pay and secure your spot:</p>
-            
-            <div className="max-w-sm mx-auto mb-6">
-              <UpiQRCode 
-                amount={formData.price} 
-                onComplete={handlePaymentComplete} 
-              />
+            {/* Payment instructions */}
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Complete Your Payment</h2>
+              <p className="text-white/80 mb-2">
+                Please complete the payment using the details below:
+              </p>
+              <div className="bg-gym-gray-dark p-4 rounded-lg shadow-md">
+                <p className="text-gym-yellow font-medium">Rebuild Fitness</p>
+                <p className="text-white/70">Account Number: 1234567890</p>
+                <p className="text-white/70">IFSC Code: REB0000123</p>
+                <p className="text-white/70">UPI ID: rebuild@upi</p>
+              </div>
             </div>
-
-            {/* Upload screenshot + share */}
-            <div className="space-y-4 mb-6">
-              <label className="block text-center font-medium">Upload Payment Screenshot</label>
-              <input 
-                type="file" 
-                accept="image/*" 
+            
+            {/* UPI QR Code */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-white mb-2">Or Pay via UPI QR Code</h3>
+              <div className="flex justify-center">
+                <UpiQRCode 
+                  amount={formData.price}
+                  paymentDescription="Rebuild Fitness Membership" 
+                  onComplete={() => {}}  
+                />
+              </div>
+            </div>
+            
+            {/* Screenshot upload section */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-white mb-2">Upload Payment Screenshot</h3>
+              <p className="text-white/70 text-sm mb-4">
+                Please upload the screenshot of your payment confirmation.
+              </p>
+              <input
+                type="file"
+                id="screenshot-upload"
+                className="hidden"
                 onChange={handleScreenshotUpload}
-                className="block mx-auto"
+                accept="image/*"
               />
+              <label htmlFor="screenshot-upload">
+                <Button
+                  variant="outline"
+                  asChild
+                  className="w-full flex items-center justify-center gap-2 border-gym-yellow text-gym-yellow hover:bg-gym-yellow/10 py-4"
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin h-5 w-5" />
+                  ) : (
+                    <Camera size={18} />
+                  )}
+                  <span>{loading ? "Uploading..." : "Upload Screenshot"}</span>
+                </Button>
+              </label>
+              
               {formData.screenshotUrl && (
-                <img src={formData.screenshotUrl} alt="Screenshot" className="mx-auto w-40 h-auto rounded-md" />
+                <div className="mt-4">
+                  <p className="text-white/70 text-sm mb-2">Uploaded Screenshot:</p>
+                  <img 
+                    src={formData.screenshotUrl} 
+                    alt="Payment Screenshot" 
+                    className="w-full h-auto rounded-lg shadow-md"
+                  />
+                </div>
               )}
+            </div>
+            
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setStep(1)}
+                className="w-full sm:w-auto text-gray-500 hover:text-rebuild-purple"
+              >
+                &larr; Back to Info
+              </Button>
+              
+              <Button
+                onClick={handlePaymentComplete}
+                disabled={loading || !formData.screenshotUrl}
+                className="w-full sm:w-auto bg-gym-yellow text-gym-black hover:bg-gym-yellow/90 transition-all py-4 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin h-5 w-5" />
+                ) : (
+                  <CheckCircle2 className="h-5 w-5" />
+                )}
+                <span>{loading ? "Processing..." : "Confirm Payment"}</span>
+              </Button>
+            </div>
+            
+            {formData.screenshotUrl && (
               <Button 
+                className="mt-4 w-full" 
                 variant="outline" 
-                className="w-full"
                 onClick={() => {
                   const wa = `https://wa.me/919618361999?text=${encodeURIComponent(
                     "Here is my payment screenshot: " + formData.screenshotUrl
@@ -369,7 +588,7 @@ const JoinForm = () => {
               >
                 Share on WhatsApp
               </Button>
-            </div>
+            )}
           </motion.div>
         )}
         
@@ -382,12 +601,12 @@ const JoinForm = () => {
             exit="exit"
             className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-white/50"
           >
-            {/* Success Icon */}
+            {/* Checkmark animation */}
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 120, damping: 8, delay: 0.2 }}
-              className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-rebuild-purple to-rebuild-pink shadow-lg mb-6"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              className="flex justify-center mb-6"
             >
               <CheckCircle2 className="h-10 w-10 text-white" />
             </motion.div>
