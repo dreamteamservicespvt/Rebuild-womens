@@ -128,6 +128,10 @@ export default {
       backgroundSize: {
         'grid': '20px 20px',
       },
+      screens: {
+        'xs': '475px',
+        // ...other existing screen sizes
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

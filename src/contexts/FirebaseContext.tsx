@@ -21,7 +21,8 @@ import {
   Timestamp,
   getDoc,
   setDoc,
-  writeBatch
+  writeBatch,
+  limit
 } from "firebase/firestore";
 
 // Firebase configuration
@@ -39,6 +40,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Add interface for coupon data
+export interface CouponData {
+  id: string;
+  code: string;
+  maxRedemptions: number;
+  usageCount: number;
+  expiryDate: string;
+  status: string;
+}
 
 // Types
 export type BookingType = {
@@ -153,7 +164,7 @@ export type CouponValidationResult = {
   message?: string;
 };
 
-type FirebaseContextType = {
+interface FirebaseContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
@@ -190,6 +201,15 @@ type FirebaseContextType = {
   createTrainer: (trainerData: Omit<TrainerType, 'id'>) => Promise<string>;
   updateTrainer: (id: string, data: Partial<TrainerType>) => Promise<void>;
   deleteTrainer: (id: string) => Promise<void>;
+  getActiveCoupon: () => Promise<{
+    id: string;
+    code: string;
+    maxRedemptions: number;
+    usageCount: number;
+    expiryDate: string;
+    status: string;
+  } | null>;
+  getAllCoupons: () => Promise<CouponData[]>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);
@@ -831,6 +851,90 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Add this function in your FirebaseProvider implementation
+  const getActiveCoupon = async () => {
+    try {
+      const couponsRef = collection(db, 'coupons');
+      const q = query(
+        couponsRef,
+        where('status', '==', 'active'),
+        orderBy('expiryDate', 'desc'),
+        limit(1)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        const couponDoc = querySnapshot.docs[0];
+        const couponData = couponDoc.data();
+        
+        // Format expiry date as string
+        let expiryDateStr = '';
+        if (couponData.expiryDate) {
+          if (couponData.expiryDate instanceof Timestamp) {
+            expiryDateStr = couponData.expiryDate.toDate().toISOString();
+          } else {
+            expiryDateStr = new Date(couponData.expiryDate).toISOString();
+          }
+        }
+        
+        return {
+          id: couponDoc.id,
+          code: couponData.code,
+          maxRedemptions: couponData.maxRedemptions || 30,
+          usageCount: couponData.usageCount || 0,
+          expiryDate: expiryDateStr,
+          status: couponData.status || 'active'
+        };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error getting active coupon:', error);
+      return null;
+    }
+  };
+
+  // Add this function to your Firebase provider component
+  const getAllCoupons = async (): Promise<CouponData[]> => {
+    try {
+      const couponsRef = collection(db, 'coupons');
+      const couponsSnapshot = await getDocs(couponsRef);
+      
+      if (couponsSnapshot.empty) {
+        console.log('No coupons found');
+        return [];
+      }
+      
+      const couponsData = couponsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        // Convert Timestamp to string format for expiryDate
+        let expiryDateStr = '';
+        if (data.expiryDate) {
+          if (data.expiryDate instanceof Timestamp) {
+            expiryDateStr = data.expiryDate.toDate().toISOString();
+          } else {
+            expiryDateStr = new Date(data.expiryDate).toISOString();
+          }
+        }
+
+        return {
+          id: doc.id,
+          code: data.code,
+          maxRedemptions: data.maxRedemptions || 30,
+          usageCount: data.usageCount || 0,
+          expiryDate: expiryDateStr,
+          status: data.status || 'inactive'
+        } as CouponData;
+      });
+      
+      return couponsData;
+    } catch (error) {
+      console.error('Error fetching all coupons:', error);
+      return [];
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -866,7 +970,9 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     getTrainer,
     createTrainer,
     updateTrainer,
-    deleteTrainer
+    deleteTrainer,
+    getActiveCoupon,
+    getAllCoupons
   };
 
   return (

@@ -1,9 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useFirebase } from "@/contexts/FirebaseContext";
-import { LogOut, Home } from "lucide-react";
+import { LogOut, Home, Menu, X } from "lucide-react";
 
-const AdminHeader = () => {
+interface AdminHeaderProps {
+  toggleSidebar: () => void;
+  isMobileMenuOpen: boolean;
+}
+
+const AdminHeader = ({ toggleSidebar, isMobileMenuOpen }: AdminHeaderProps) => {
   const navigate = useNavigate();
   const { signOut } = useFirebase();
 
@@ -25,35 +30,43 @@ const AdminHeader = () => {
   };
 
   return (
-    <header className="bg-gym-gray-dark border-b border-gym-gray-light py-3 sm:py-4 sticky top-0 z-30 shadow-md">
-      <div className="container mx-auto px-3 sm:px-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gym-yellow font-heading">Rebuild Women</h1>
-          <p className="text-white/70 text-xs sm:text-sm">Admin Dashboard</p>
-        </div>
+    <header className="bg-gym-gray-dark border-b border-gym-gray-light p-4 flex items-center justify-between sticky top-0 z-10">
+      {/* Mobile menu toggle */}
+      <button 
+        onClick={toggleSidebar}
+        className="p-2 lg:hidden text-white hover:text-gym-yellow focus:outline-none"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+      
+      {/* Title - hidden on smallest screens */}
+      <h1 className="text-xl font-bold text-gym-yellow hidden xs:block">
+        Admin Dashboard
+      </h1>
+      
+      {/* Actions area - adjust sizing for mobile */}
+      <div className="flex items-center space-x-2">
+        <Button 
+          variant="ghost" 
+          onClick={goToHomepage}
+          size="sm"
+          className="text-white hover:bg-gym-gray-light"
+          title="Go to Homepage"
+        >
+          <Home className="h-4 w-4 sm:mr-1" />
+          <span className="hidden sm:inline">Home</span>
+        </Button>
         
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            onClick={goToHomepage}
-            size="sm"
-            className="text-white hover:bg-gym-gray-light"
-            title="Go to Homepage"
-          >
-            <Home className="h-4 w-4 sm:mr-1" />
-            <span className="hidden sm:inline">Home</span>
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            onClick={handleSignOut}
-            size="sm"
-            className="border-gym-yellow text-gym-yellow hover:bg-gym-yellow/20"
-          >
-            <LogOut className="h-4 w-4 sm:mr-1" />
-            <span className="hidden sm:inline">Sign Out</span>
-          </Button>
-        </div>
+        <Button 
+          variant="outline" 
+          onClick={handleSignOut}
+          size="sm"
+          className="border-gym-yellow text-gym-yellow hover:bg-gym-yellow/20"
+        >
+          <LogOut className="h-4 w-4 sm:mr-1" />
+          <span className="hidden sm:inline">Sign Out</span>
+        </Button>
       </div>
     </header>
   );

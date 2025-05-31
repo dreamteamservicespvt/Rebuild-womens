@@ -91,8 +91,6 @@ const CouponManager = ({
       // Update UI with fresh count
       setTotalRedemptions(totalCount);
       setLimitReached(totalCount >= 30);
-      
-      console.log(`Found ${totalCount} total redemptions across all coupons`);
     } catch (error) {
       console.error("Error checking redemptions:", error);
     } finally {

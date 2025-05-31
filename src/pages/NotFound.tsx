@@ -17,9 +17,6 @@ const NotFound = () => {
     if (process.env.NODE_ENV === "production") {
       // In production, we would integrate with proper error tracking
       // Example: errorTrackingService.captureError(errorInfo);
-    } else {
-      // Only log to console in development
-      console.warn("404 Error: Path not found", errorInfo);
     }
   }, [location.pathname]);
 

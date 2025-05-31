@@ -1,0 +1,49 @@
+/* Global responsive styles for admin panels */
+
+/* Better mobile touch targets */
+@media (max-width: 640px) {
+  .admin-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Ensure inputs are easy to tap */
+  input, select, textarea, button {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+    min-height: 44px;
+  }
+  
+  /* Improve table readability on small screens */
+  .responsive-table td, .responsive-table th {
+    padding: 12px 8px;
+  }
+}
+
+/* Fix for iOS position fixed issues */
+.ios-fixed-fix {
+  position: fixed;
+  width: 100%;
+  -webkit-transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Additional spacing utilities for admin interfaces */
+.admin-content-spacing {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Optimize scrolling on mobile */
+.optimize-mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbars for mobile while keeping functionality */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

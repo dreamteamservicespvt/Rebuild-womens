@@ -142,12 +142,9 @@ const CreateCouponDialog = ({
         status
       };
       
-      console.log("Saving coupon with data:", couponData);
-      
       if (isEditing && existingCoupon) {
         // Update existing coupon
         await updateCoupon(existingCoupon.id, couponData);
-        console.log(`Coupon ${formattedCode} updated successfully`);
         toast({
           title: "Coupon updated",
           description: `Coupon "${formattedCode}" has been updated successfully.`
@@ -155,7 +152,6 @@ const CreateCouponDialog = ({
       } else {
         // Create new coupon
         await createCoupon(couponData);
-        console.log(`Coupon ${formattedCode} created successfully`);
         toast({
           title: "Coupon created",
           description: `Coupon "${formattedCode}" has been created successfully.`

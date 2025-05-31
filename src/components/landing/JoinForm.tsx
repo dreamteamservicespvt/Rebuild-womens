@@ -125,10 +125,8 @@ const JoinForm = () => {
       // For monitoring, log the error to a service in production 
       if (process.env.NODE_ENV === "production") {
         // errorLoggingService.logError(error);
-      } else {
-        // Only in development
-        console.warn("Form submission error:", errorMessage);
-      }
+      } 
+      // Remove console warning about form submission error
     } finally {
       setLoading(false);
     }

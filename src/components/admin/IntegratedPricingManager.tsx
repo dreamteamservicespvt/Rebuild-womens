@@ -60,7 +60,6 @@ const IntegratedPricingManager = () => {
       setServices(servicesData);
       
       // Always fetch coupons data when refreshing after a redemption reset
-      // Removed the tab condition to ensure data is always fresh
       const couponsData = await getCoupons();
       setCoupons(couponsData);
       
@@ -70,8 +69,6 @@ const IntegratedPricingManager = () => {
       const allRedemptionsSnapshot = await getDocs(collection(db, "couponRedemptions"));
       const totalUsed = allRedemptionsSnapshot.size;
       setTotalRedemptions(totalUsed);
-      
-      console.log(`Fetched data: ${couponsData.length} coupons, ${totalUsed} redemptions`);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast({

@@ -5,6 +5,15 @@ import { cn } from "@/lib/utils";
 import { useFirebase, SessionType } from "@/contexts/FirebaseContext";
 import { Timestamp } from "firebase/firestore";
 
+// helper to sort morning sessions first, then evening, then by time
+const sortSessions = (sessions: SessionType[]) =>
+	[...sessions].sort((a, b) => {
+		if (a.timeOfDay !== b.timeOfDay) {
+			return a.timeOfDay === "morning" ? -1 : 1;
+		}
+		return a.time.localeCompare(b.time);
+	});
+
 // If Firebase data isn't available, fallback to these values
 const fallbackSessions = [
 	{
@@ -69,24 +78,26 @@ const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 // Initialize sessions from all sources (memory, localStorage, hardcoded defaults)
 const initializeSessionsData = (): { sessions: SessionType[], source: string } => {
-  // First try to get from localStorage
   try {
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    if (cachedData) {
-      const { data, timestamp } = JSON.parse(cachedData);
-      // Use cached data if it's not expired
-      if (Date.now() - timestamp < CACHE_EXPIRY) {
-        console.log("Using cached sessions from localStorage");
-        return { sessions: data, source: "cache" };
+    const cached = localStorage.getItem('sessions-data');
+    if (cached) {
+      const parsedData = JSON.parse(cached);
+      const cachedTimestamp = new Date(parsedData.timestamp);
+      const currentTime = new Date();
+      
+      // Check if cache is still valid (less than 1 hour old)
+      if (currentTime.getTime() - cachedTimestamp.getTime() < 3600000) {
+        // Silent return of cached data without console log
+        return { sessions: parsedData.sessions, source: "cache" };
       }
     }
   } catch (error) {
-    console.warn("Error reading from localStorage:", error);
+    // Replace console.warn with silent failure
+    // We'll just return fallback data without logging
   }
   
-  // Fallback to hardcoded data
-  console.log("Using fallback session data");
-  return { sessions: fallbackSessions as SessionType[], source: "fallback" };
+  // Return fallback data without console log
+  return { sessions: fallbackSessions, source: "fallback" };
 };
 
 // Helper function to cache sessions with proper error handling
@@ -96,7 +107,6 @@ const persistSessions = (sessions: SessionType[]) => {
       data: sessions,
       timestamp: Date.now()
     }));
-    console.log("Sessions cached to localStorage");
     
     // Store in sessionStorage as well for immediate access on page navigation
     sessionStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -114,17 +124,42 @@ const SessionsSection = () => {
   const initialData = initializeSessionsData();
   const [sessions, setSessions] = useState<SessionType[]>(initialData.sessions);
   const [isRefreshing, setIsRefreshing] = useState(initialData.source !== "firebase");
+  // Add visibility tracking for large screens
+  const [hasEnteredViewport, setHasEnteredViewport] = useState(false);
   
-  // We don't need a loading state anymore since we always show data immediately
-  // Use isRefreshing to track background updates instead
+  // Use intersection observer to detect when section enters viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setHasEnteredViewport(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 } // Trigger when 10% of the element is visible
+    );
+    
+    const section = document.getElementById("sessions");
+    if (section) {
+      observer.observe(section);
+    }
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
   
   useEffect(() => {
     // Flag to avoid state updates if component unmounts during fetch
     let isMounted = true;
     
+    // Immediately make sessions visible on all devices by using fallback data
+    if (sessions.length === 0) {
+      setSessions(fallbackSessions);
+    }
+    
     const syncWithFirebase = async () => {
       try {
-        console.log("Background syncing with Firebase...");
         const sessionsData = await getSessions();
         
         if (!isMounted) return;
@@ -139,24 +174,18 @@ const SessionsSection = () => {
           
           const uniqueSessions = Array.from(uniqueSessionsMap.values());
           
-          // Only update if we have meaningful data
+          // Always update with Firebase data when available
           if (uniqueSessions.length > 0) {
-            // Use a subtle transition when updating
-            setSessions(prev => {
-              // Only update if the data is actually different
-              if (JSON.stringify(prev) !== JSON.stringify(uniqueSessions)) {
-                console.log("Updating sessions with Firebase data");
-                // Persist the synchronized data
-                persistSessions(uniqueSessions);
-                return uniqueSessions;
-              }
-              return prev;
-            });
+            setSessions(sortSessions(uniqueSessions));
+            // Persist the synchronized data
+            persistSessions(sortSessions(uniqueSessions));
           }
         }
       } catch (error) {
-        console.error("Error syncing with Firebase:", error);
-        // No need to update state or show error - just keep using what we have
+        // If Firebase fails, ensure we still show fallback data
+        if (sessions.length === 0) {
+          setSessions(fallbackSessions);
+        }
       } finally {
         if (isMounted) {
           setIsRefreshing(false);
@@ -176,7 +205,7 @@ const SessionsSection = () => {
       isMounted = false;
       clearInterval(refreshInterval);
     };
-  }, [getSessions]);
+  }, [getSessions, sessions.length]);
   
   // Helper function to get period text based on timeOfDay
   const getPeriodText = (timeOfDay: "morning" | "evening") => {
@@ -203,13 +232,16 @@ const SessionsSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-300">
           {sessions.map((session, index) => (
             <div
-              key={`${session.id}-${index}`} // Using index with ID to ensure uniqueness
+              key={`${session.id}-${index}`}
               className={cn(
-                "bg-gym-gray-dark rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1 animate-on-scroll",
-                "hover:border-gym-yellow border-2 border-transparent"
+                "bg-gym-gray-dark rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-1",
+                "hover:border-gym-yellow border-2 border-transparent",
+                // Remove animation classes that might cause visibility issues on different devices
+                hasEnteredViewport ? "opacity-100" : "opacity-100" // Always visible regardless of animation state
               )}
               style={{
-                animationDelay: `${index * 0.1}s`,
+                // Use simpler animation approach that works consistently across devices
+                transitionDelay: `${index * 0.1}s`,
                 boxShadow: "0 0 10px rgba(255, 243, 24, 0.1)",
               }}
             >
@@ -256,7 +288,7 @@ const SessionsSection = () => {
         </div>
 
         <div className="mt-10 text-center">
-          <p className="text-lg font-medium animate-on-scroll text-white">
+          <p className="text-lg font-medium text-white">
             Pick Any Slot Based on Your Flexibility
           </p>
         </div>

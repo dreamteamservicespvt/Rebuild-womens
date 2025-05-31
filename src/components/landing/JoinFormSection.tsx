@@ -21,7 +21,8 @@ interface Service {
 
 const JoinFormSection = () => {
   const { toast } = useToast();
-  const { getServices, submitBooking, validateCoupon } = useFirebase();
+  // Add missing Firebase context functions
+  const { getServices, validateCoupon, submitBooking } = useFirebase();
   
   // Add step state for the multi-step process
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
@@ -137,11 +138,6 @@ const JoinFormSection = () => {
     }
     
     if (!serviceId) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a service first.",
-      });
       return;
     }
     
@@ -150,10 +146,8 @@ const JoinFormSection = () => {
     try {
       // Apply uppercase and trim the coupon code
       const formattedCode = couponCode.trim().toUpperCase();
-      console.log(`Applying coupon: ${formattedCode} for service: ${serviceId}`);
       
       const result = await validateCoupon(formattedCode, serviceId);
-      console.log("Coupon validation result:", result);
       
       setCouponApplied(true);
       
@@ -437,7 +431,8 @@ const JoinFormSection = () => {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Enter your full name"
-                          className="bg-gym-gray border-gym-gray-light text-white"
+                          className="bg-gym-gray border-gym-gray-light text-white placeholder:text-white/50 focus:bg-gym-gray hover:bg-gym-gray focus:border-gym-yellow focus-visible:ring-0 focus-visible:ring-offset-0 autofill:bg-gym-gray"
+                          style={{ WebkitTextFillColor: 'white', WebkitBoxShadow: '0 0 0px 1000px #1a1a1a inset' }}
                           required
                         />
                       </div>
@@ -449,7 +444,8 @@ const JoinFormSection = () => {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="Enter your phone number"
-                          className="bg-gym-gray border-gym-gray-light text-white"
+                          className="bg-gym-gray border-gym-gray-light text-white placeholder:text-white/50 focus:bg-gym-gray hover:bg-gym-gray focus:border-gym-yellow focus-visible:ring-0 focus-visible:ring-offset-0 autofill:bg-gym-gray"
+                          style={{ WebkitTextFillColor: 'white', WebkitBoxShadow: '0 0 0px 1000px #1a1a1a inset' }}
                           required
                         />
                       </div>
@@ -462,7 +458,8 @@ const JoinFormSection = () => {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="Enter your email address"
-                          className="bg-gym-gray border-gym-gray-light text-white"
+                          className="bg-gym-gray border-gym-gray-light text-white placeholder:text-white/50 focus:bg-gym-gray hover:bg-gym-gray focus:border-gym-yellow focus-visible:ring-0 focus-visible:ring-offset-0 autofill:bg-gym-gray"
+                          style={{ WebkitTextFillColor: 'white', WebkitBoxShadow: '0 0 0px 1000px #1a1a1a inset' }}
                         />
                       </div>
                       
@@ -507,7 +504,8 @@ const JoinFormSection = () => {
                                   value={couponCode}
                                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                   placeholder="Enter your coupon code"
-                                  className="bg-gym-gray border-gym-yellow/30 text-white uppercase focus:border-gym-yellow"
+                                  className="bg-gym-gray border-gym-yellow/30 text-white uppercase placeholder:text-white/50 focus:bg-gym-gray hover:bg-gym-gray focus:border-gym-yellow focus-visible:ring-0 focus-visible:ring-offset-0 autofill:bg-gym-gray"
+                                  style={{ WebkitTextFillColor: 'white', WebkitBoxShadow: '0 0 0px 1000px #1a1a1a inset' }}
                                   disabled={couponApplied || couponLoading}
                                 />
                               </div>
@@ -574,7 +572,8 @@ const JoinFormSection = () => {
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
                           placeholder="Any specific requirements or questions?"
-                          className="bg-gym-gray border-gym-gray-light text-white min-h-[100px]"
+                          className="bg-gym-gray border-gym-gray-light text-white placeholder:text-white/50 focus:bg-gym-gray hover:bg-gym-gray min-h-[100px] focus:border-gym-yellow focus-visible:ring-0 focus-visible:ring-offset-0"
+                          style={{ WebkitTextFillColor: 'white', WebkitBoxShadow: '0 0 0px 1000px #1a1a1a inset' }}
                         />
                       </div>
                     </div>
@@ -914,7 +913,7 @@ const JoinFormSection = () => {
                             <span className="text-gym-yellow text-sm">1</span>
                           </div>
                           <div>
-                            <h5 className="text-white font-medium">Expect Our Call</h5>
+                            <h5 className="text-white font-medium mb-1">Expect Our Call</h5>
                             <p className="text-white/70 text-sm">Our team will contact you within 24 hours to confirm your booking and answer any questions.</p>
                           </div>
                         </div>
@@ -924,7 +923,7 @@ const JoinFormSection = () => {
                             <span className="text-gym-yellow text-sm">2</span>
                           </div>
                           <div>
-                            <h5 className="text-white font-medium">Attend Your First Session</h5>
+                            <h5 className="text-white font-medium mb-1">Attend Your First Session</h5>
                             <p className="text-white/70 text-sm">Come prepared for your first session. Wear comfortable clothes and bring a water bottle.</p>
                           </div>
                         </div>
@@ -934,7 +933,7 @@ const JoinFormSection = () => {
                             <span className="text-gym-yellow text-sm">3</span>
                           </div>
                           <div>
-                            <h5 className="text-white font-medium">Begin Your Transformation</h5>
+                            <h5 className="text-white font-medium mb-1">Begin Your Transformation</h5>
                             <p className="text-white/70 text-sm">Start your fitness journey with our expert trainers guiding you every step of the way.</p>
                           </div>
                         </div>
