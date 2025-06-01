@@ -1,9 +1,9 @@
 /* Reset default root styles that are affecting the admin layout */
 #root {
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  text-align: left;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
 
 /* Keep the rest of your existing styles */
@@ -41,4 +41,36 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Disable text selection on mobile devices */
+@media (max-width: 768px) {
+  body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection in input fields and textareas */
+  input, 
+  textarea, 
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+}
+
+/* Add a custom class that can be applied to specific elements that should allow text selection */
+.allow-select {
+  -webkit-user-select: text !important;
+  -khtml-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
 }
