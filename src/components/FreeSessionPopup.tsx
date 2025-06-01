@@ -88,7 +88,7 @@ const FreeSessionPopup = ({ onClose }: FreeSessionPopupProps) => {
       
       setIsSuccess(true);
       
-      // Mark as shown in localStorage
+      // Mark as submitted in localStorage to prevent showing the popup again
       localStorage.setItem('freeSession_submitted', 'true');
       localStorage.setItem('freeSession_lastShown', new Date().toISOString());
       
@@ -116,24 +116,30 @@ const FreeSessionPopup = ({ onClose }: FreeSessionPopupProps) => {
   };
   
   return (
-    <AnimatePresence>
+    // Add enter animation for smooth appearance
+    <AnimatePresence mode="wait">
       <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-        {/* Backdrop */}
+        {/* Backdrop with improved animation */}
         <motion.div 
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
         />
         
-        {/* Popup Content */}
+        {/* Popup Content with enhanced animation */}
         <motion.div
           className="w-full max-w-md z-10 bg-gym-gray-dark border border-gym-gray-light rounded-xl overflow-hidden shadow-2xl"
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          transition={{ 
+            type: "spring", 
+            damping: 30, 
+            stiffness: 350,
+            mass: 1
+          }}
         >
           {/* Yellow top accent */}
           <div className="h-2 bg-gradient-to-r from-gym-yellow/50 via-gym-yellow to-gym-yellow/50"></div>

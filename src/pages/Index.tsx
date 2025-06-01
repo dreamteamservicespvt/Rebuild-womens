@@ -11,26 +11,40 @@ const Index = () => {
   // State for free session popup
   const [showFreeSessionPopup, setShowFreeSessionPopup] = useState(false);
   
-  // Effect to show popup after 10 seconds
+  // Effect to show popup with different timing based on visit type
   useEffect(() => {
-    // Check if user has submitted the form before
+    // For development debugging only - uncomment to reset storage when needed
+    // localStorage.removeItem('freeSession_submitted');
+    // localStorage.removeItem('freeSession_lastShown');
+    // localStorage.removeItem('first_visit_completed');
+    
+    // Check if user has submitted the form before - never show popup in this case
     const hasSubmitted = localStorage.getItem('freeSession_submitted') === 'true';
-    
-    // Check if popup was recently shown (within the last 24 hours)
-    const lastShown = localStorage.getItem('freeSession_lastShown');
-    const wasRecentlyShown = lastShown && 
-      (new Date().getTime() - new Date(lastShown).getTime() < 24 * 60 * 60 * 1000);
-    
-    // If user hasn't submitted and popup wasn't recently shown
-    if (!hasSubmitted && !wasRecentlyShown) {
-      const timer = setTimeout(() => {
-        setShowFreeSessionPopup(true);
-        // Mark as shown in the current session
-        localStorage.setItem('freeSession_lastShown', new Date().toISOString());
-      }, 10000); // 10 seconds
-      
-      return () => clearTimeout(timer);
+    if (hasSubmitted) {
+      return; // Don't show popup to users who already filled the form
     }
+    
+    // Check if this is the first visit or a reload
+    const isFirstVisit = localStorage.getItem('first_visit_completed') !== 'true';
+    
+    // Set the appropriate delay based on whether it's first visit or reload
+    const popupDelay = isFirstVisit ? 5000 : 10000; // 5s for first visit, 10s for reloads
+    
+    // Set a timer to show the popup after the appropriate delay
+    const timer = setTimeout(() => {
+      console.log(`Showing popup after ${popupDelay/1000}s - First visit: ${isFirstVisit}`);
+      setShowFreeSessionPopup(true);
+      
+      // Mark as shown in the current session
+      localStorage.setItem('freeSession_lastShown', new Date().toISOString());
+      
+      // If this was the first visit, mark it as completed for future visits
+      if (isFirstVisit) {
+        localStorage.setItem('first_visit_completed', 'true');
+      }
+    }, popupDelay);
+    
+    return () => clearTimeout(timer);
   }, []);
   
   const handleClosePopup = () => {
