@@ -327,3 +327,27 @@ body {
   @apply bg-gym-yellow/10;
   box-shadow: 0 0 15px rgba(255, 243, 24, 0.5), 0 0 30px rgba(255, 243, 24, 0.2);
 }
+
+/* Premium text selection highlighting */
+::selection {
+  background-color: rgba(255, 243, 24, 0.4); /* gym-yellow with 40% opacity */
+  color: #000; /* Black text for better contrast */
+  text-shadow: none; /* Remove any text shadows when selected */
+}
+
+::-moz-selection {
+  background-color: rgba(255, 243, 24, 0.4); /* For Firefox */
+  color: #000;
+  text-shadow: none;
+}
+
+/* Custom selection animation for special elements - optional enhancement */
+.premium-select ::selection {
+  background-color: rgba(255, 243, 24, 0.6); /* More vibrant for key content */
+  color: #000;
+}
+
+.premium-select ::-moz-selection {
+  background-color: rgba(255, 243, 24, 0.6); /* For Firefox */
+  color: #000;
+}

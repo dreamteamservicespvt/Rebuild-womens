@@ -1,47 +1,46 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
   Users, 
   Calendar, 
-  Tag, 
-  Settings, 
-  FileText, 
-  Award,
-  DollarSign
+  DollarSign,
+  Clock,
+  BarChart3 
 } from "lucide-react";
-import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-const AdminSidebar = () => {
-  const router = useRouter();
+interface AdminSidebarProps {
+  isMobileMenuOpen: boolean;
+  onItemClick?: () => void; // Optional callback to close mobile menu
+}
+
+const AdminSidebar = ({ isMobileMenuOpen, onItemClick }: AdminSidebarProps) => {
+  const location = useLocation();
 
   const isActive = (path: string) => {
-    return router.pathname === path || router.pathname.startsWith(`${path}/`);
+    // For the root admin path, only consider it active if it's exactly /admin
+    if (path === "/admin") {
+      return location.pathname === "/admin";
+    }
+    
+    // For other paths, check if the current path starts with the given path
+    return location.pathname.startsWith(path);
   };
 
   const navItems = [
     { name: "Dashboard", href: "/admin", icon: Home },
-    { name: "Members", href: "/admin/members", icon: Users },
     { name: "Bookings", href: "/admin/bookings", icon: Calendar },
-    { name: "Services", href: "/admin/services", icon: Award },
-    { name: "Coupons", href: "/admin/coupons", icon: Tag },
-    { name: "Payments", href: "/admin/payments", icon: DollarSign },
-    { name: "Reports", href: "/admin/reports", icon: FileText },
-    { name: "Settings", href: "/admin/settings", icon: Settings }
+    { name: "Pricing", href: "/admin/pricing", icon: DollarSign },
+    { name: "Sessions", href: "/admin/sessions", icon: Clock },
+    { name: "Memberships", href: "/admin/memberships", icon: Users },
+    { name: "Analytics", href: "/admin/analytics", icon: BarChart3 }
   ];
 
   return (
     <div className="h-full flex flex-col bg-gym-gray-dark border-r border-gym-gray-light">
       {/* Logo area with better mobile padding */}
       <div className="px-4 py-5 flex items-center justify-center border-b border-gym-gray-light mb-2">
-        <div className="relative w-40 h-12">
-          <Image
-            src="/images/logo-light.png"
-            alt="Rebuild Women Logo"
-            fill
-            style={{ objectFit: "contain" }}
-          />
-        </div>
+        <div className="text-xl font-bold text-gym-yellow">Rebuild Fitness</div>
       </div>
 
       {/* Navigation - adjusted for better touch targets */}
@@ -53,14 +52,16 @@ const AdminSidebar = () => {
           return (
             <Link
               key={item.name}
-              href={item.href}
-              className={`flex items-center py-3 px-4 mx-2 rounded-lg mb-1 ${
+              to={item.href}
+              className={cn(
+                "flex items-center py-3 px-4 mx-2 rounded-lg mb-1",
                 active 
                   ? "bg-gym-yellow text-black font-medium" 
                   : "text-white/80 hover:bg-gym-yellow/10 hover:text-white"
-              } transition-colors`}
+              )}
+              onClick={onItemClick}
             >
-              <Icon size={18} className={`flex-shrink-0 ${active ? "text-black" : "text-gym-yellow"}`} />
+              <Icon size={18} className={cn("flex-shrink-0", active ? "text-black" : "text-gym-yellow")} />
               <span className="ml-3 text-sm">{item.name}</span>
             </Link>
           );

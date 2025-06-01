@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import { Users, Calendar, Tag, DollarSign } from "lucide-react";
+import { useFirebase } from "@/contexts/FirebaseContext";
 
 interface StatCardProps {
   title: string;
@@ -35,30 +37,69 @@ const StatCard = ({ title, value, icon, trend, bgClass = "bg-gym-gray-dark" }: S
 };
 
 const StatsCards = () => {
+  const { getBookings, getCoupons, getServices } = useFirebase();
+  const [stats, setStats] = useState({
+    bookings: 0,
+    revenue: 0,
+    memberships: 0,
+    coupons: 0
+  });
+  
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Fetch all necessary data in parallel
+        const [bookings, services, coupons] = await Promise.all([
+          getBookings(),
+          getServices(),
+          getCoupons()
+        ]);
+        
+        // Calculate stats
+        const totalBookings = bookings.length;
+        
+        // Calculate revenue from completed bookings
+        const completedBookings = bookings.filter(b => b.paymentStatus === "completed");
+        const revenue = completedBookings.reduce((total, booking) => total + Number(booking.price || 0), 0);
+        
+        setStats({
+          bookings: totalBookings,
+          revenue: revenue,
+          memberships: services.length,
+          coupons: coupons.filter(c => c.status === 'active').length
+        });
+        
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
+    
+    fetchStats();
+  }, [getBookings, getServices, getCoupons]);
+
   return (
     <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <StatCard
-        title="Total Members"
-        value="157"
-        icon={<Users size={20} className="text-gym-yellow" />}
+        title="Total Bookings"
+        value={stats.bookings}
+        icon={<Calendar size={20} className="text-gym-yellow" />}
         trend={{ value: 12, isPositive: true }}
       />
       <StatCard
-        title="Active Bookings"
-        value="28"
-        icon={<Calendar size={20} className="text-gym-yellow" />}
-        trend={{ value: 5, isPositive: true }}
+        title="Revenue"
+        value={`₹${stats.revenue.toLocaleString()}`}
+        icon={<DollarSign size={20} className="text-gym-yellow" />}
+        trend={{ value: 8, isPositive: true }}
+      />
+      <StatCard
+        title="Services"
+        value={stats.memberships}
+        icon={<Users size={20} className="text-gym-yellow" />}
       />
       <StatCard
         title="Active Coupons"
-        value="3"
+        value={stats.coupons}
         icon={<Tag size={20} className="text-gym-yellow" />}
-      />
-      <StatCard
-        title="Revenue (This Month)"
-        value="₹52,400"
-        icon={<DollarSign size={20} className="text-gym-yellow" />}
-        trend={{ value: 8, isPositive: true }}
       />
     </div>
   );
