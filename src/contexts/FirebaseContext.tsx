@@ -164,6 +164,17 @@ export type CouponValidationResult = {
   message?: string;
 };
 
+// Add FreeSessionType definition
+export type FreeSessionType = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  timestamp: any; // Firestore timestamp
+  status?: 'new' | 'contacted' | 'booked' | 'completed' | 'cancelled';
+  notes?: string;
+};
+
 interface FirebaseContextType {
   user: User | null;
   loading: boolean;
@@ -210,6 +221,12 @@ interface FirebaseContextType {
     status: string;
   } | null>;
   getAllCoupons: () => Promise<CouponData[]>;
+  // Free Session methods
+  getFreeSessions: () => Promise<FreeSessionType[]>;
+  getFreeSession: (id: string) => Promise<FreeSessionType | null>;
+  createFreeSession: (data: Omit<FreeSessionType, 'id' | 'timestamp'>) => Promise<string>;
+  updateFreeSession: (id: string, data: Partial<FreeSessionType>) => Promise<void>;
+  deleteFreeSession: (id: string) => Promise<void>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);
@@ -954,6 +971,79 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [db]);
 
+  // Free Session Methods
+  const getFreeSessions = async (): Promise<FreeSessionType[]> => {
+    try {
+      const freeSessionsRef = collection(db, "free_sessions");
+      const q = query(freeSessionsRef, orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+      
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as FreeSessionType[];
+    } catch (error) {
+      console.error("Error getting free sessions:", error);
+      throw error;
+    }
+  };
+  
+  const getFreeSession = async (id: string): Promise<FreeSessionType | null> => {
+    try {
+      const freeSessionRef = doc(db, "free_sessions", id);
+      const snapshot = await getDoc(freeSessionRef);
+      
+      if (!snapshot.exists()) {
+        return null;
+      }
+      
+      return {
+        id: snapshot.id,
+        ...snapshot.data()
+      } as FreeSessionType;
+    } catch (error) {
+      console.error("Error getting free session:", error);
+      throw error;
+    }
+  };
+  
+  const createFreeSession = async (data: Omit<FreeSessionType, 'id' | 'timestamp'>): Promise<string> => {
+    try {
+      const freeSessionsRef = collection(db, "free_sessions");
+      const newData = {
+        ...data,
+        timestamp: Timestamp.now(),
+        status: data.status || 'new'
+      };
+      
+      const docRef = await addDoc(freeSessionsRef, newData);
+      return docRef.id;
+    } catch (error) {
+      console.error("Error creating free session:", error);
+      throw error;
+    }
+  };
+  
+  const updateFreeSession = async (id: string, data: Partial<FreeSessionType>): Promise<void> => {
+    try {
+      const freeSessionRef = doc(db, "free_sessions", id);
+      await updateDoc(freeSessionRef, data);
+    } catch (error) {
+      console.error("Error updating free session:", error);
+      throw error;
+    }
+  };
+  
+  const deleteFreeSession = async (id: string): Promise<void> => {
+    try {
+      const freeSessionRef = doc(db, "free_sessions", id);
+      await deleteDoc(freeSessionRef);
+    } catch (error) {
+      console.error("Error deleting free session:", error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -993,7 +1083,14 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     getActiveCoupon,
     getAllCoupons,
     totalRedemptions,
-    getTotalRedemptions
+    getTotalRedemptions,
+    
+    // Free Session methods
+    getFreeSessions,
+    getFreeSession,
+    createFreeSession,
+    updateFreeSession,
+    deleteFreeSession,
   };
 
   return (

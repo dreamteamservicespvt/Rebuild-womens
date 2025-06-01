@@ -32,7 +32,7 @@ const App = () => {
               <Sonner />
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/*" element={<Admin />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
