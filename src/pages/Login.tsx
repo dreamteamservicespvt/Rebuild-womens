@@ -53,7 +53,7 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-50 px-4 overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-rebuild-purple">Rebuild Fitness</h1>

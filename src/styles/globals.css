@@ -1,17 +1,3 @@
-/* Reset CSS */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-/* Ensure #root or #__next takes full height */
-#root, #__next {
-  height: 100%;
-}
-
 /* Add this to your existing globals.css file */
 
 /* Premium button glow effect */

@@ -367,48 +367,99 @@
   .lg\:scroll-padding-top-\[96px\] {
     scroll-padding-top: 96px;
   }
-  
-  .backdrop-blur-strong {
-    backdrop-filter: blur(12px);
-  }
-  
-  .text-shadow-sm {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-  
-  .text-shadow-glow {
-    text-shadow: 0 0 8px rgba(255, 243, 24, 0.3);
-  }
+}
 
-  /* Fixed values */
-  .scroll-pt-16 {
-    scroll-padding-top: 4rem; /* 64px */
+/* Extra small screen utility */
+@layer utilities {
+  @variants responsive {
+    .xs\:flex-row {
+      flex-direction: row;
+    }
+    
+    .xs\:max-w-sm {
+      max-width: 24rem;
+    }
+    
+    .xs\:max-w-md {
+      max-width: 28rem;
+    }
+    
+    .xs\:text-base {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+    
+    .xs\:text-sm {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+    
+    .xs\:hidden {
+      display: none;
+    }
+    
+    .xs\:block {
+      display: block;
+    }
+    
+    .xs\:flex {
+      display: flex;
+    }
+    
+    .xs\:py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    
+    .xs\:bottom-4 {
+      bottom: 1rem;
+    }
+    
+    .xs\:bottom-16 {
+      bottom: 4rem;
+    }
   }
-  
-  .scroll-pt-20 {
-    scroll-padding-top: 5rem; /* 80px */
+}
+
+/* Ensure responsive font sizing */
+.responsive-text-xs {
+  font-size: clamp(0.75rem, 1vw + 0.5rem, 0.875rem);
+}
+
+.responsive-text-sm {
+  font-size: clamp(0.875rem, 1vw + 0.6rem, 1rem);
+}
+
+.responsive-text-base {
+  font-size: clamp(1rem, 1.2vw + 0.7rem, 1.125rem);
+}
+
+.responsive-text-lg {
+  font-size: clamp(1.125rem, 1.5vw + 0.8rem, 1.25rem);
+}
+
+.responsive-text-xl {
+  font-size: clamp(1.25rem, 2vw + 0.9rem, 1.5rem);
+}
+
+/* Fix for mobile viewport height issues with dynamic content */
+.mobile-full-height {
+  height: 100vh; /* fallback */
+  height: -webkit-fill-available;
+  height: stretch;
+}
+
+/* Fix for viewport height on iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  .mobile-full-height {
+    height: -webkit-fill-available;
   }
-  
-  .scroll-pt-24 {
-    scroll-padding-top: 6rem; /* 96px */
-  }
-  
-  /* Responsive variants with arbitrary values */
-  .\[scroll-padding-top\:70px\] {
-    scroll-padding-top: 70px;
-  }
-  
-  .sm\:scroll-padding-top-\[70px\] {
-    scroll-padding-top: 70px;
-  }
-  
-  .md\:scroll-padding-top-\[80px\] {
-    scroll-padding-top: 80px;
-  }
-  
-  .lg\:scroll-padding-top-\[96px\] {
-    scroll-padding-top: 96px;
-  }
+}
+
+/* Optimize scrolling performance */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 /* Fix animation for mobile performance */
