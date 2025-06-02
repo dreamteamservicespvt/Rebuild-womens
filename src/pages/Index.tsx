@@ -52,7 +52,7 @@ const Index = () => {
   };
   
   return (
-    <main className="min-h-screen">
+    <main className="h-full">
       <HeroSection />
       <SessionsSection />
       <PricingSection />

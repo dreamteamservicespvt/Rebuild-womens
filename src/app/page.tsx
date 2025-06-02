@@ -33,7 +33,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center text-white">
+    <section id="hero" className="relative h-screen flex items-center justify-center text-white overflow-hidden">
       <ImageSlideshow 
         images={DESKTOP_IMAGES} 
         mobileImages={MOBILE_IMAGES}

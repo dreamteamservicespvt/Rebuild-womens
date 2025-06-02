@@ -72,7 +72,7 @@ const LocationSection = () => {
                   <div>
                     <h4 className="font-semibold text-lg mb-2 text-white">Our Address</h4>
                     <p className="text-white/80 leading-relaxed">
-                      REBUILD WOMEN'S Fitness Gym,<br />
+                      Rebuild Fitness Gym,<br />
                       23‑7‑7/1, Opp. Bhavani Function Hall,<br />
                       TTD Kalyana Mandapam Backside,<br />
                       Balaji Cheruvu Centre,<br />

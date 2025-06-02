@@ -121,7 +121,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center text-white">
+    <section id="hero" className="relative h-screen flex items-center justify-center text-white overflow-hidden">
       <NavigationBar />
 
       <ImageSlideshow
@@ -137,29 +137,49 @@ const HeroSection = () => {
 
       <div className="container-custom relative z-10 flex justify-start items-center h-full">
         <div className="max-w-4xl mt-16 sm:mt-16 md:mt-12 px-4 sm:px-6 md:px-8 py-4 sm:py-10 md:py-12 relative text-left">
-          {/* Main headline - Updated for more impact */}
+          {/* Mobile only REBUILD WOMEN'S text */}
+          <div className="sm:hidden mb-3 relative">
+            <div className="relative inline-block">
+              {/* Modified glow effect to only apply behind text */}
+              <span className="absolute -inset-y-1 -inset-x-2 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow/50 to-gym-yellow/30 blur-lg rounded-md"></span>
+              <span className="relative block text-[28px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
+                     [text-shadow:0_0_10px_rgba(255,243,24,0.5),3px_3px_0px_rgba(0,0,0,0.8)] py-1 px-1">
+                <span className="relative inline-block after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] 
+                       after:bg-gradient-to-r after:from-transparent after:via-gym-yellow after:to-transparent">
+                  REBUILD WOMEN'S
+                </span>
+              </span>
+            </div>
+            <div className="absolute -bottom-1 left-0 w-[160px] h-[3px] bg-gym-yellow/70 rounded-full"></div>
+          </div>
+          
+          {/* Desktop version of REBUILD WOMEN'S - hidden on mobile */}
+          <motion.div 
+            className="hidden sm:block mb-5 relative"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="relative inline-block">
+              {/* Enhanced glow effect for desktop */}
+              <span className="absolute -inset-y-2 -inset-x-4 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow/40 to-gym-yellow/30 blur-lg rounded-md"></span>
+              <span className="relative block text-[36px] md:text-[42px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
+                     [text-shadow:0_0_15px_rgba(255,243,24,0.6),3px_3px_0px_rgba(0,0,0,0.9)] py-1 px-1">
+                <span className="relative inline-block after:content-[''] after:absolute after:bottom-[-3px] after:left-0 after:w-full after:h-[3px] 
+                       after:bg-gradient-to-r after:from-transparent after:via-gym-yellow after:to-transparent">
+                  REBUILD WOMEN'S
+                </span>
+              </span>
+            </div>
+            <div className="absolute -bottom-1 left-0 w-[240px] h-[4px] bg-gym-yellow/70 rounded-full"></div>
+          </motion.div>
+
           <motion.h1
             className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic leading-tight sm:leading-tight tracking-wider"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {/* REBUILD WOMEN'S text for both mobile and desktop */}
-            <div className="mb-3 relative">
-              <div className="relative inline-block">
-                {/* Modified glow effect to only apply behind text */}
-                <span className="absolute -inset-y-1 -inset-x-2 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow/50 to-gym-yellow/30 blur-lg rounded-md"></span>
-                <span className="relative block text-[28px] sm:text-[40px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
-                       [text-shadow:0_0_10px_rgba(255,243,24,0.5),3px_3px_0px_rgba(0,0,0,0.8)] py-1 px-1">
-                  <span className="relative inline-block after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] 
-                         after:bg-gradient-to-r after:from-transparent after:via-gym-yellow after:to-transparent">
-                    REBUILD WOMEN'S
-                  </span>
-                </span>
-              </div>
-              <div className="absolute -bottom-1 left-0 w-[160px] sm:w-[240px] h-[3px] bg-gym-yellow/70 rounded-full"></div>
-            </div>
-
             <span className="block text-[24px] sm:text-5xl leading-tight mb-2 tracking-wider font-[900] italic">
               <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">TRANSFORM</span>{' '}
               <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">YOUR</span>{' '}

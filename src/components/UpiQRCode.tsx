@@ -16,7 +16,7 @@ const UPIQRCode = ({ amount, paymentDescription, onComplete }: UPIQRCodeProps) =
   // Generate QR code for UPI payment
   const upiID = "9618361999@ybl";
   const payeeName = "AKULA SAGAR/Sri Devi";
-  const transactionNote = "REBUILD WOMEN'S Fitness Fee";
+  const transactionNote = "Rebuild Fitness Fee";
   
   const upiString = `upi://pay?pa=${upiID}&pn=${payeeName}&am=${amount}&cu=INR&tn=${transactionNote}`;
 

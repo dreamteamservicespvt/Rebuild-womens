@@ -124,7 +124,7 @@ const TrainerManager = () => {
       // Create FormData for upload
       const formData = new FormData();
       formData.append("file", imageFile);
-      formData.append("upload_preset", "rebuild_womens"); // Updated with underscore for consistency
+      formData.append("upload_preset", "rebuild womens");
       
       // Upload to Cloudinary
       const uploadResponse = await fetch("https://api.cloudinary.com/v1_1/dvmrhs2ek/upload", {
