@@ -121,7 +121,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="hero" className="relative h-screen flex items-center justify-center text-white overflow-hidden">
+    <section id="hero" className="relative min-h-[100svh] flex items-center justify-center text-white overflow-hidden">
       <NavigationBar />
 
       <ImageSlideshow
@@ -132,17 +132,17 @@ const HeroSection = () => {
         enableKenBurns={true}
       />
 
-      {/* Enhanced overlay with further reduced opacity */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30 z-[1]"></div>
+      {/* Enhanced overlay with improved responsiveness */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/40 z-[1]"></div>
 
-      <div className="container-custom relative z-10 flex justify-start items-center h-full">
-        <div className="max-w-4xl mt-16 sm:mt-16 md:mt-12 px-4 sm:px-6 md:px-8 py-4 sm:py-10 md:py-12 relative text-left">
+      <div className="container-custom relative z-10 flex justify-start items-center h-full w-full px-4 sm:px-6">
+        <div className="max-w-4xl mt-16 sm:mt-16 md:mt-12 py-4 sm:py-6 md:py-8 relative text-left">
           {/* Mobile only REBUILD WOMEN'S text */}
-          <div className="sm:hidden mb-3 relative">
+          <div className="sm:hidden mb-2 md:mb-3 relative">
             <div className="relative inline-block">
               {/* Modified glow effect to only apply behind text */}
               <span className="absolute -inset-y-1 -inset-x-2 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow/50 to-gym-yellow/30 blur-lg rounded-md"></span>
-              <span className="relative block text-[28px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
+              <span className="relative block text-[22px] xs:text-[26px] text-gym-yellow font-heading font-[900] italic tracking-[0.12em] xs:tracking-[0.15em] 
                      [text-shadow:0_0_10px_rgba(255,243,24,0.5),3px_3px_0px_rgba(0,0,0,0.8)] py-1 px-1">
                 <span className="relative inline-block after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] 
                        after:bg-gradient-to-r after:from-transparent after:via-gym-yellow after:to-transparent">
@@ -155,7 +155,7 @@ const HeroSection = () => {
           
           {/* Desktop version of REBUILD WOMEN'S - hidden on mobile */}
           <motion.div 
-            className="hidden sm:block mb-5 relative"
+            className="hidden sm:block mb-3 md:mb-5 relative"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -163,7 +163,7 @@ const HeroSection = () => {
             <div className="relative inline-block">
               {/* Enhanced glow effect for desktop */}
               <span className="absolute -inset-y-2 -inset-x-4 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow/40 to-gym-yellow/30 blur-lg rounded-md"></span>
-              <span className="relative block text-[36px] md:text-[42px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
+              <span className="relative block text-[28px] sm:text-[32px] md:text-[42px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
                      [text-shadow:0_0_15px_rgba(255,243,24,0.6),3px_3px_0px_rgba(0,0,0,0.9)] py-1 px-1">
                 <span className="relative inline-block after:content-[''] after:absolute after:bottom-[-3px] after:left-0 after:w-full after:h-[3px] 
                        after:bg-gradient-to-r after:from-transparent after:via-gym-yellow after:to-transparent">
@@ -171,21 +171,21 @@ const HeroSection = () => {
                 </span>
               </span>
             </div>
-            <div className="absolute -bottom-1 left-0 w-[240px] h-[4px] bg-gym-yellow/70 rounded-full"></div>
+            <div className="absolute -bottom-1 left-0 w-[180px] sm:w-[200px] md:w-[240px] h-[4px] bg-gym-yellow/70 rounded-full"></div>
           </motion.div>
 
           <motion.h1
-            className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic leading-tight sm:leading-tight tracking-wider"
+            className="text-lg xs:text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black italic leading-tight sm:leading-tight tracking-wide sm:tracking-wider"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="block text-[24px] sm:text-5xl leading-tight mb-2 tracking-wider font-[900] italic">
+            <span className="block text-[20px] xs:text-[24px] sm:text-4xl md:text-5xl leading-tight mb-1 sm:mb-2 tracking-wider font-[900] italic">
               <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">TRANSFORM</span>{' '}
               <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">YOUR</span>{' '}
               <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">BODY</span>
             </span>
-            <span className="text-[20px] sm:text-4xl tracking-wider font-[900] italic">
+            <span className="text-[16px] xs:text-[20px] sm:text-3xl md:text-4xl tracking-wider font-[900] italic">
               <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">IN A SPACE</span>{' '}
               <span className="text-gym-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,1),0_0_20px_rgba(255,243,24,0.4)]">DESIGNED</span>{' '}
               <span className="text-white [text-shadow:2px_2px_0px_rgba(0,0,0,1)]">FOR</span>{' '}
@@ -193,9 +193,9 @@ const HeroSection = () => {
             </span>
           </motion.h1>
 
-          {/* Subheadline - Updated with more benefits */}
+          {/* Subheadline - Enhanced responsiveness */}
           <motion.p
-            className="font-heading text-sm sm:text-xl md:text-2xl mt-3 sm:mt-6 mb-2 sm:mb-3 tracking-wide text-white/90
+            className="font-heading text-xs xs:text-sm sm:text-lg md:text-xl xl:text-2xl mt-2 sm:mt-4 md:mt-6 mb-1 sm:mb-2 md:mb-3 tracking-wide text-white/90
                      font-medium [text-shadow:0_2px_10px_rgba(0,0,0,0.5)]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -204,59 +204,58 @@ const HeroSection = () => {
             Expert Female Trainers • Personalized Programs • Women-Only Environment
           </motion.p>
 
-          {/* Offer line - Updated with clearer pricing structure */}
+          {/* Offer line - More responsive text sizes */}
           <motion.div
-            className="inline-block bg-gym-yellow/20 backdrop-blur-sm border border-gym-yellow/50 rounded-lg py-2 px-3 sm:px-4 mt-2 sm:mt-4 mb-6 sm:mb-8"
+            className="inline-block bg-gym-yellow/20 backdrop-blur-sm border border-gym-yellow/50 rounded-lg py-1.5 xs:py-2 px-2 xs:px-3 sm:px-4 mt-2 sm:mt-4 mb-5 sm:mb-6 md:mb-8"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            <p className="text-xs leading-snug sm:text-sm font-medium whitespace-normal">
+            <p className="text-2xs xs:text-xs leading-snug sm:text-sm font-medium whitespace-normal">
               <span className="text-white/90">Limited Time Offer:</span> <span className="text-gym-yellow font-semibold">25% OFF</span> on All Programs
               <br className="hidden sm:block" />
               <span className="text-white/80"> Morning (5:30AM-10:30AM) & Evening (4PM-8PM) Sessions</span>
             </p>
           </motion.div>
 
-          {/* Button container - Adjusted for mobile row layout */}
-          <div className="flex flex-row gap-2 sm:gap-5 justify-between w-full sm:max-w-md">
+          {/* Button container - Improved mobile layout with xs breakpoint */}
+          <div className="flex flex-col xs:flex-row gap-3 xs:gap-2 sm:gap-4 md:gap-5 justify-between w-full xs:max-w-[300px] sm:max-w-md">
             <Button
               size="lg"
-              className="flex-1 text-base sm:text-lg bg-gym-yellow hover:bg-gym-yellow/90 text-black relative overflow-hidden group shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,243,24,0.4)] animate-slide-up opacity-0 py-4 sm:py-6 font-bold tracking-wide"
+              className="w-full xs:flex-1 text-sm xs:text-base sm:text-lg bg-gym-yellow hover:bg-gym-yellow/90 text-black relative overflow-hidden group shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,243,24,0.4)] animate-slide-up opacity-0 py-3 xs:py-4 sm:py-5 md:py-6 font-bold tracking-wide"
               style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}
               onClick={() => scrollToSection('join')}
             >
-              <span className="relative z-10 text-sm sm:text-xl">START TODAY</span>
+              <span className="relative z-10 text-xs xs:text-sm sm:text-lg md:text-xl">START TODAY</span>
               <span className="absolute inset-0 bg-black/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
             </Button>
 
             <Button
               size="lg"
               variant="outline"
-              className="flex-1 text-base sm:text-lg border-2 border-white/80 text-white hover:text-white hover:border-gym-yellow bg-transparent hover:bg-gym-yellow/20 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,243,24,0.3)] animate-slide-up opacity-0 py-4 sm:py-6 font-bold tracking-wide"
+              className="w-full xs:flex-1 text-sm xs:text-base sm:text-lg border-2 border-white/80 text-white hover:text-white hover:border-gym-yellow bg-transparent hover:bg-gym-yellow/20 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,243,24,0.3)] animate-slide-up opacity-0 py-3 xs:py-4 sm:py-5 md:py-6 font-bold tracking-wide"
               style={{ animationDelay: "1s", animationFillMode: "forwards" }}
               onClick={() => scrollToSection('sessions')}
             >
-              <span className="relative z-10 text-sm sm:text-xl">VIEW PROGRAMS</span>
+              <span className="relative z-10 text-xs xs:text-sm sm:text-lg md:text-xl">VIEW PROGRAMS</span>
               <span className="absolute inset-0 transform scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-300"></span>
             </Button>
           </div>
 
-          {/* Decorative divider between content and quotes */}
+          {/* Decorative divider - Responsive width */}
           <motion.div
-            className="w-32 h-1 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow to-gym-yellow/30 my-10 rounded-full shadow-[0_0_10px_rgba(255,243,24,0.4)]"
+            className="w-24 xs:w-28 sm:w-32 h-px xs:h-1 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow to-gym-yellow/30 my-8 sm:my-10 rounded-full shadow-[0_0_10px_rgba(255,243,24,0.4)]"
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 128, opacity: 1 }}
+            animate={{ width: "100%", maxWidth: 128, opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.6 }}
           />
-
         </div>
       </div>
 
-      {/* Bottom center quotes section with typewriter animation */}
-      <div className="absolute bottom-20 sm:bottom-16 left-0 right-0 z-20">
+      {/* Bottom center quotes section - Adjusted position for better visibility */}
+      <div className="absolute bottom-16 xs:bottom-18 sm:bottom-20 md:bottom-16 left-0 right-0 z-20">
         <motion.div
-          className="max-w-lg mx-auto px-3 sm:px-4"
+          className="max-w-xs xs:max-w-sm sm:max-w-md lg:max-w-lg mx-auto px-2 xs:px-3 sm:px-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4, duration: 0.8 }}
@@ -265,15 +264,15 @@ const HeroSection = () => {
         </motion.div>
       </div>
 
-      {/* Scroll indicator - Hidden on mobile */}
-      <div className="hidden sm:flex absolute bottom-[4.5rem] sm:bottom-6 md:bottom-8 right-3 sm:right-6 md:right-8 flex-col items-center justify-center animate-pulse z-30">
-        <span className="text-white/70 text-xs sm:text-sm mb-1 sm:mb-2 animate-fade-in opacity-0" style={{ animationDelay: "1.6s", animationFillMode: "forwards" }}>
+      {/* Scroll indicator - Better positioning and visibility */}
+      <div className="hidden xs:flex absolute bottom-4 xs:bottom-5 sm:bottom-6 md:bottom-8 right-2 xs:right-3 sm:right-6 md:right-8 flex-col items-center justify-center animate-pulse z-30">
+        <span className="text-white/70 text-2xs xs:text-xs sm:text-sm mb-1 sm:mb-2 animate-fade-in opacity-0" style={{ animationDelay: "1.6s", animationFillMode: "forwards" }}>
           Scroll to explore
         </span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
