@@ -144,12 +144,12 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {/* Premium REBUILD text for mobile only */}
-            <div className="sm:hidden mb-3 relative">
+            {/* REBUILD WOMEN'S text for both mobile and desktop */}
+            <div className="mb-3 relative">
               <div className="relative inline-block">
                 {/* Modified glow effect to only apply behind text */}
                 <span className="absolute -inset-y-1 -inset-x-2 bg-gradient-to-r from-gym-yellow/30 via-gym-yellow/50 to-gym-yellow/30 blur-lg rounded-md"></span>
-                <span className="relative block text-[28px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
+                <span className="relative block text-[28px] sm:text-[40px] text-gym-yellow font-heading font-[900] italic tracking-[0.15em] 
                        [text-shadow:0_0_10px_rgba(255,243,24,0.5),3px_3px_0px_rgba(0,0,0,0.8)] py-1 px-1">
                   <span className="relative inline-block after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] 
                          after:bg-gradient-to-r after:from-transparent after:via-gym-yellow after:to-transparent">
@@ -157,7 +157,7 @@ const HeroSection = () => {
                   </span>
                 </span>
               </div>
-              <div className="absolute -bottom-1 left-0 w-[160px] h-[3px] bg-gym-yellow/70 rounded-full"></div>
+              <div className="absolute -bottom-1 left-0 w-[160px] sm:w-[240px] h-[3px] bg-gym-yellow/70 rounded-full"></div>
             </div>
 
             <span className="block text-[24px] sm:text-5xl leading-tight mb-2 tracking-wider font-[900] italic">

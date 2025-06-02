@@ -109,7 +109,7 @@ const JoinForm = () => {
     const file = e.target.files[0];
     const data = new FormData();
     data.append("file", file);
-    data.append("upload_preset", "rebuild womens");
+    data.append("upload_preset", "rebuild_womens");  // Updated with underscore for consistency
     try {
       const res = await fetch("https://api.cloudinary.com/v1_1/dvmrhs2ek/upload", {
         method: "POST", body: data

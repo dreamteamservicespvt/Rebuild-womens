@@ -10,7 +10,7 @@ const MotiveSection = () => {
       
       <div className="container-custom relative z-10">
         <SectionTitle 
-          title="Why Rebuild Women?" 
+          title="Why REBUILD WOMEN'S?" 
           subtitle="Our mission and values"
           className="text-white"
         />

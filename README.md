@@ -1,6 +1,6 @@
-# Rebuild Fitness Kakinada
+# REBUILD WOMEN'S Fitness Kakinada
 
-A website for Rebuild Fitness - a women-only weight loss fitness center in Kakinada, India.
+A website for REBUILD WOMEN'S - a women-only weight loss fitness center in Kakinada, India.
 
 ## Features
 

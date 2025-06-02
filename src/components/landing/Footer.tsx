@@ -17,7 +17,7 @@ const Footer = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="animate-on-scroll visible">
-            <h3 className="text-xl font-bold mb-4 text-gym-yellow neon-text">Rebuild Fitness</h3>
+            <h3 className="text-xl font-bold mb-4 text-gym-yellow neon-text">REBUILD WOMEN'S</h3>
             <p className="text-white/80 mb-4">Women-only weight-loss program executed by certified women trainers.</p>
             
             <div className="flex flex-wrap gap-3">

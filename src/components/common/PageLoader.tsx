@@ -98,7 +98,7 @@ const PageLoader = ({ duration = 2000 }: PageLoaderProps) => {
             >
               <motion.img 
                 src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747563756/wa32r5fvog2a86kbxvf5.png"
-                alt="Rebuild Fitness"
+                alt="REBUILD WOMEN'S"
                 className="h-48 w-auto filter brightness-110 z-10"
                 style={{
                   filter: 'brightness(1.2) drop-shadow(0 0 15px rgba(255, 243, 24, 0.8)) drop-shadow(0 0 30px rgba(255, 243, 24, 0.6))'

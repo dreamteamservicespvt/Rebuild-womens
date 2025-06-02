@@ -40,7 +40,7 @@ const AdminSidebar = ({ isMobileMenuOpen, onItemClick }: AdminSidebarProps) => {
     <div className="h-full flex flex-col bg-gym-gray-dark border-r border-gym-gray-light">
       {/* Logo area with better mobile padding */}
       <div className="px-4 py-5 flex items-center justify-center border-b border-gym-gray-light mb-2">
-        <div className="text-xl font-bold text-gym-yellow">Rebuild Fitness</div>
+        <div className="text-xl font-bold text-gym-yellow tracking-wider italic">REBUILD WOMEN'S</div>
       </div>
 
       {/* Navigation - adjusted for better touch targets */}

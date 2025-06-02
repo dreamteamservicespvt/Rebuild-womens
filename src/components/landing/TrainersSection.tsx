@@ -88,7 +88,7 @@ const TrainersSection = () => {
                   <div className="md:w-2/5 h-64 md:h-auto relative overflow-hidden">
                     <img 
                       src={trainer.image} 
-                      alt={`${trainer.name} - Rebuild Women Trainer`}
+                      alt={`${trainer.name} - REBUILD WOMEN'S Trainer`}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     {/* Overlay gradient */}
