@@ -287,33 +287,155 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
   const getBookings = async () => {
     try {
-      const querySnapshot = await getDocs(
-        query(collection(db, "bookings"), orderBy("createdAt", "desc"))
-      );
-      return querySnapshot.docs.map(doc => ({
+      // Fetch from both collections
+      const [bookingsSnapshot, bookingRequestsSnapshot] = await Promise.all([
+        getDocs(query(collection(db, "bookings"), orderBy("createdAt", "desc"))),
+        getDocs(query(collection(db, "bookingRequests"), orderBy("createdAt", "desc")))
+      ]);
+      
+      // Process traditional bookings
+      const bookings = bookingsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }) as BookingType);
+      }));
+      
+      // Process booking requests (from registration form)
+      const bookingRequests = bookingRequestsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        // Normalize field names to match BookingType
+        return {
+          id: doc.id,
+          name: data.name,
+          email: data.email || '',
+          phone: data.phone,
+          preferredSlot: data.serviceName || data.preferredSlot || 'Not specified',
+          paymentStatus: data.paymentStatus || data.status || 'completed',
+          price: data.amount || data.price || 0,
+          createdAt: data.createdAt || data.timestamp ? Timestamp.fromDate(new Date(data.timestamp)) : Timestamp.now(),
+          screenshotUrl: data.screenshotUrl || ''
+        };
+      });
+      
+      // Combine both collections and sort by date (most recent first)
+      // Fix type safety issues with better type handling
+      const combinedBookings = [...bookings, ...bookingRequests].sort((a, b) => {
+        // Safely handle potential missing createdAt property
+        const getTimestamp = (item: any): number => {
+          if (!item || typeof item !== 'object') return 0;
+          const createdAt = item.createdAt;
+          if (!createdAt) return 0;
+          // Check if it's a Firestore Timestamp and has toDate method
+          if (typeof createdAt.toDate === 'function') {
+            return createdAt.toDate().getTime();
+          } 
+          // Handle if it's a Date object or timestamp string
+          else if (createdAt instanceof Date) {
+            return createdAt.getTime();
+          } 
+          // If it's a timestamp string/number
+          else if (createdAt) {
+            return new Date(createdAt).getTime();
+          }
+          return 0;
+        };
+        
+        return getTimestamp(b) - getTimestamp(a);
+      });
+      
+      // Remove console log about booking counts
+      return combinedBookings as BookingType[];
     } catch (error) {
-      console.error("Error getting bookings:", error);
+      // Remove console.error
       throw error;
     }
   };
 
   const updateBooking = async (id: string, data: Partial<BookingType>) => {
     try {
-      await updateDoc(doc(db, "bookings", id), data);
+      // Validate data before sending to Firestore
+      const validatedData = { ...data };
+      
+      // Make sure price is a number
+      if (validatedData.price !== undefined) {
+        validatedData.price = Number(validatedData.price);
+      }
+      
+      // Clean undefined values that might cause Firestore errors
+      Object.keys(validatedData).forEach(key => {
+        if (validatedData[key as keyof typeof validatedData] === undefined) {
+          delete validatedData[key as keyof typeof validatedData];
+        }
+      });
+      
+      // Remove the console.log that exposes booking data
+      
+      // First check if document exists in bookings collection
+      const bookingRef = doc(db, "bookings", id);
+      const bookingSnap = await getDoc(bookingRef);
+      
+      if (bookingSnap.exists()) {
+        // Update in bookings collection
+        await updateDoc(bookingRef, validatedData);
+        return;
+      }
+      
+      // If not in bookings, try bookingRequests collection
+      const bookingRequestRef = doc(db, "bookingRequests", id);
+      const bookingRequestSnap = await getDoc(bookingRequestRef);
+      
+      if (bookingRequestSnap.exists()) {
+        // Update in bookingRequests collection
+        await updateDoc(bookingRequestRef, validatedData);
+        return;
+      }
+      
+      // If we got here, the document wasn't found in either collection
+      throw new Error(`Booking not found in any collection: ${id}`);
+      
     } catch (error) {
-      console.error("Error updating booking:", error);
-      throw error;
+      // Keep error tracking but don't print to console in production
+      if (process.env.NODE_ENV === 'development') {
+        // Only log in development environment
+        console.error("Error in updateBooking:", error);
+      }
+      
+      // Re-throw with more context for better debugging
+      throw new Error(`Failed to update booking: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
   const deleteBooking = async (id: string) => {
     try {
-      await deleteDoc(doc(db, "bookings", id));
+      // First check if document exists in bookings collection
+      const bookingRef = doc(db, "bookings", id);
+      const bookingSnap = await getDoc(bookingRef);
+      
+      if (bookingSnap.exists()) {
+        // Delete from bookings collection
+        await deleteDoc(bookingRef);
+        return;
+      }
+      
+      // If not in bookings, try bookingRequests collection
+      const bookingRequestRef = doc(db, "bookingRequests", id);
+      const bookingRequestSnap = await getDoc(bookingRequestRef);
+      
+      if (bookingRequestSnap.exists()) {
+        // Delete from bookingRequests collection
+        await deleteDoc(bookingRequestRef);
+        return;
+      }
+      
+      // If we get here, the document wasn't found in either collection
+      throw new Error(`Booking not found in any collection: ${id}`);
+      
     } catch (error) {
-      console.error("Error deleting booking:", error);
+      // Keep error tracking but don't print to console in production
+      if (process.env.NODE_ENV === 'development') {
+        // Only log in development environment
+        console.error("Error deleting booking:", error);
+      }
+      
       throw error;
     }
   };

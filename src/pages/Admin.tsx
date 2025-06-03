@@ -71,73 +71,84 @@ const Admin = () => {
       <AdminHeader toggleSidebar={toggleSidebar} isMobileMenuOpen={isMobileMenuOpen} />
       
       <div className="flex-grow flex overflow-hidden">
-        {/* Sidebar Navigation */}
+        {/* Mobile overlay when sidebar is open - added for touch dismissal */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          ></div>
+        )}
+
+        {/* Sidebar Navigation - Fixed position for mobile */}
         <div className={cn(
-          "bg-gym-gray-dark border-r border-gym-gray-light w-64 flex-shrink-0 transition-all duration-300",
+          "fixed lg:relative inset-y-0 left-0 z-50 w-64 h-full",
+          "lg:flex-shrink-0 transition-transform duration-300 ease-in-out",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}>
-          <div className="p-4 border-b border-gym-gray-light">
-            <h2 className="text-lg font-bold text-white">Admin Dashboard</h2>
-          </div>
-          <ScrollArea className="h-full">
-            <div className="p-4 space-y-2">
-              <NavItem 
-                to="bookings" 
-                icon={<CalendarDays className="mr-2 h-5 w-5" />}
-                label="Bookings"
-                isActive={activeSection === "bookings"}
-                onClick={() => setActiveSection("bookings")}
-              />
-              <NavItem 
-                to="pricing" 
-                icon={<DollarSign className="mr-2 h-5 w-5" />}
-                label="Pricing"
-                isActive={activeSection === "pricing"}
-                onClick={() => setActiveSection("pricing")}
-              />
-              <NavItem 
-                to="sessions" 
-                icon={<Clock className="mr-2 h-5 w-5" />}
-                label="Sessions"
-                isActive={activeSection === "sessions"}
-                onClick={() => setActiveSection("sessions")}
-              />
-              <NavItem 
-                to="memberships" 
-                icon={<Users className="mr-2 h-5 w-5" />}
-                label="Memberships"
-                isActive={activeSection === "memberships"}
-                onClick={() => setActiveSection("memberships")}
-              />
-              {/* Add Free Session Leads navigation item */}
-              <NavItem 
-                to="free-sessions" 
-                icon={<GiftIcon className="mr-2 h-5 w-5" />}
-                label="Free Session Leads"
-                isActive={activeSection === "free-sessions"}
-                onClick={() => setActiveSection("free-sessions")}
-              />
-              <NavItem 
-                to="analytics" 
-                icon={<BarChart3 className="mr-2 h-5 w-5" />}
-                label="Analytics"
-                isActive={activeSection === "analytics"}
-                onClick={() => setActiveSection("analytics")}
-              />
-              <NavItem 
-                to="/" 
-                absolute={true}
-                icon={<Home className="mr-2 h-5 w-5" />}
-                label="Back to Site"
-                isActive={false}
-                onClick={() => {}} 
-              />
+          <div className="bg-gym-gray-dark border-r border-gym-gray-light h-full">
+            <div className="p-4 border-b border-gym-gray-light">
+              <h2 className="text-lg font-bold text-white">Admin Dashboard</h2>
             </div>
-          </ScrollArea>
+            <ScrollArea className="h-full">
+              <div className="p-4 space-y-2">
+                <NavItem 
+                  to="bookings" 
+                  icon={<CalendarDays className="mr-2 h-5 w-5" />}
+                  label="Bookings"
+                  isActive={activeSection === "bookings"}
+                  onClick={() => setActiveSection("bookings")}
+                />
+                <NavItem 
+                  to="pricing" 
+                  icon={<DollarSign className="mr-2 h-5 w-5" />}
+                  label="Pricing"
+                  isActive={activeSection === "pricing"}
+                  onClick={() => setActiveSection("pricing")}
+                />
+                <NavItem 
+                  to="sessions" 
+                  icon={<Clock className="mr-2 h-5 w-5" />}
+                  label="Sessions"
+                  isActive={activeSection === "sessions"}
+                  onClick={() => setActiveSection("sessions")}
+                />
+                <NavItem 
+                  to="memberships" 
+                  icon={<Users className="mr-2 h-5 w-5" />}
+                  label="Memberships"
+                  isActive={activeSection === "memberships"}
+                  onClick={() => setActiveSection("memberships")}
+                />
+                {/* Add Free Session Leads navigation item */}
+                <NavItem 
+                  to="free-sessions" 
+                  icon={<GiftIcon className="mr-2 h-5 w-5" />}
+                  label="Free Session Leads"
+                  isActive={activeSection === "free-sessions"}
+                  onClick={() => setActiveSection("free-sessions")}
+                />
+                <NavItem 
+                  to="analytics" 
+                  icon={<BarChart3 className="mr-2 h-5 w-5" />}
+                  label="Analytics"
+                  isActive={activeSection === "analytics"}
+                  onClick={() => setActiveSection("analytics")}
+                />
+                <NavItem 
+                  to="/" 
+                  absolute={true}
+                  icon={<Home className="mr-2 h-5 w-5" />}
+                  label="Back to Site"
+                  isActive={false}
+                  onClick={() => {}} 
+                />
+              </div>
+            </ScrollArea>
+          </div>
         </div>
         
-        {/* Main Content Area */}
-        <div className="flex-grow overflow-auto p-4 sm:p-6">
+        {/* Main Content Area - Full width on mobile */}
+        <div className="w-full flex-grow overflow-auto p-4 sm:p-6">
           <Routes>
             <Route path="/" element={<Navigate to="bookings" replace />} />
             <Route path="bookings" element={<BookingsTable />} />

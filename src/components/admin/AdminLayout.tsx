@@ -52,22 +52,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       {/* Mobile overlay when sidebar is open */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-20 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         ></div>
       )}
       
-      {/* Sidebar - responsive positioning */}
-      <div 
-        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 transform ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 transition-transform duration-300 ease-in-out`}
-      >
-        <AdminSidebar />
-      </div>
-
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Main content area - positioned to take full width */}
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Mobile header with menu toggle */}
         <AdminHeader 
           toggleSidebar={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -76,10 +67,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         
         {/* Main content with safe area padding for mobile */}
         <main className="flex-1 overflow-y-auto bg-gym-black p-3 sm:p-6">
-          <div className="max-w-full mx-auto">
+          <div className="w-full mx-auto">
             {children}
           </div>
         </main>
+      </div>
+      
+      {/* Sidebar - positioned absolute/fixed on mobile so it overlays content */}
+      <div 
+        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 transform ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0 transition-transform duration-300 ease-in-out`}
+      >
+        <AdminSidebar isMobileMenuOpen={mobileMenuOpen} />
       </div>
     </div>
   );

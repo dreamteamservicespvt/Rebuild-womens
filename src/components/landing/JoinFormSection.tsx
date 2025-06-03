@@ -308,7 +308,7 @@ const JoinFormSection = () => {
         originalAmount: selectedService.basePrice,
         timestamp: new Date().toISOString(),
         trainer: selectedService.trainer || "",
-        status: 'pending' as const,
+        paymentStatus: 'completed', // Changed from status: 'pending' to paymentStatus: 'completed'
         screenshotUrl: screenshotUrl // Include the screenshot URL
       };
       

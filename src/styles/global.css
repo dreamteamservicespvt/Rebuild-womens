@@ -1,0 +1,51 @@
+/* Add these responsive mobile utilities */
+
+/* Prevent pull-to-refresh on mobile touchscreens when interacting with elements */
+.touch-none {
+  touch-action: none;
+}
+
+/* Extra small breakpoint for devices smaller than typical mobile */
+@media (max-width: 400px) {
+  .xs\:hidden {
+    display: none;
+  }
+  
+  .xs\:flex {
+    display: flex;
+  }
+  
+  .xs\:flex-row {
+    flex-direction: row;
+  }
+  
+  .xs\:flex-col {
+    flex-direction: column;
+  }
+  
+  .xs\:w-auto {
+    width: auto;
+  }
+  
+  .xs\:flex-initial {
+    flex: 0 1 auto;
+  }
+  
+  .xs\:items-center {
+    align-items: center;
+  }
+  
+  .xs\:inline {
+    display: inline;
+  }
+}
+
+/* Create a gentle "press" animation for touch interfaces */
+.active\:scale-95:active {
+  transform: scale(0.98);
+}
+
+/* Improved scrolling on iOS */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+}

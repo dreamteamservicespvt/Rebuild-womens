@@ -31,13 +31,16 @@ const AdminHeader = ({ toggleSidebar, isMobileMenuOpen }: AdminHeaderProps) => {
 
   return (
     <header className="bg-gym-gray-dark border-b border-gym-gray-light p-4 flex items-center justify-between sticky top-0 z-10">
-      {/* Mobile menu toggle */}
+      {/* Mobile menu toggle - improved touch target */}
       <button 
         onClick={toggleSidebar}
-        className="p-2 lg:hidden text-white hover:text-gym-yellow focus:outline-none"
+        className="p-2 -ml-2 lg:hidden text-white hover:text-gym-yellow focus:outline-none flex items-center justify-center"
         aria-label="Toggle menu"
       >
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        {isMobileMenuOpen ? 
+          <X size={24} className="text-gym-yellow" /> : 
+          <Menu size={24} />
+        }
       </button>
       
       {/* Title - hidden on smallest screens */}
