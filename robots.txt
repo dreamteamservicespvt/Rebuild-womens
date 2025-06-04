@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow admin sections
+Disallow: /admin
+Disallow: /login
+
+# Sitemap location
+Sitemap: https://www.rebuildwomens.fit/sitemap.xml
