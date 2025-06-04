@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
-import { BarChart3, CalendarDays, Clock, DollarSign, Users, Home, GiftIcon } from "lucide-react";
+import { BarChart3, CalendarDays, Clock, DollarSign, Users, Home, GiftIcon, Settings } from "lucide-react";
 import { useFirebase } from "@/contexts/FirebaseContext";
 import AdminHeader from "@/components/admin/AdminHeader";
 import BookingsTable from "@/components/admin/BookingsTable";
 import IntegratedPricingManager from "@/components/admin/IntegratedPricingManager";
 import SessionManager from "@/components/admin/SessionManager";
 import MembershipManager from "@/components/admin/MembershipManager";
-import FreeSessionManager from "@/components/admin/FreeSessionManager"; // Add this import
+import FreeSessionManager from "@/components/admin/FreeSessionManager";
+import FooterSettingsManager from "@/components/admin/FooterSettingsManager"; // Import the new component
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +42,8 @@ const Admin = () => {
     else if (path.includes("/sessions")) setActiveSection("sessions");
     else if (path.includes("/memberships")) setActiveSection("memberships");
     else if (path.includes("/analytics")) setActiveSection("analytics");
-    else if (path.includes("/free-sessions")) setActiveSection("free-sessions"); // Add this line
+    else if (path.includes("/free-sessions")) setActiveSection("free-sessions");
+    else if (path.includes("/footer-settings")) setActiveSection("footer-settings"); // Add this line
     else setActiveSection("bookings"); // Default
   }, [location.pathname]);
 
@@ -119,7 +121,6 @@ const Admin = () => {
                   isActive={activeSection === "memberships"}
                   onClick={() => setActiveSection("memberships")}
                 />
-                {/* Add Free Session Leads navigation item */}
                 <NavItem 
                   to="free-sessions" 
                   icon={<GiftIcon className="mr-2 h-5 w-5" />}
@@ -133,6 +134,14 @@ const Admin = () => {
                   label="Analytics"
                   isActive={activeSection === "analytics"}
                   onClick={() => setActiveSection("analytics")}
+                />
+                {/* Add the new Footer Settings nav item */}
+                <NavItem 
+                  to="footer-settings" 
+                  icon={<Settings className="mr-2 h-5 w-5" />}
+                  label="Footer Settings"
+                  isActive={activeSection === "footer-settings"}
+                  onClick={() => setActiveSection("footer-settings")}
                 />
                 <NavItem 
                   to="/" 
@@ -155,7 +164,9 @@ const Admin = () => {
             <Route path="pricing" element={<IntegratedPricingManager />} />
             <Route path="sessions" element={<SessionManager />} />
             <Route path="memberships" element={<MembershipManager />} />
-            <Route path="free-sessions" element={<FreeSessionManager />} /> {/* Add this route */}
+            <Route path="free-sessions" element={<FreeSessionManager />} />
+            {/* Add the route for Footer Settings */}
+            <Route path="footer-settings" element={<FooterSettingsManager />} />
             <Route path="analytics" element={
               <div className="bg-gym-gray-dark rounded-lg shadow-md border border-gym-gray-light p-8">
                 <h2 className="text-xl font-bold text-white mb-4">Analytics Dashboard</h2>

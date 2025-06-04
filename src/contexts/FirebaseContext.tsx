@@ -175,6 +175,21 @@ export type FreeSessionType = {
   notes?: string;
 };
 
+// Add FooterSettings type if not already defined
+export interface FooterSettings {
+  id?: string;
+  phone: string;
+  email: string;
+  brandName: string;
+  socialLinks: {
+    instagram?: string;
+    facebook?: string;
+    whatsapp?: string;
+    youtube?: string;
+    x?: string;
+  };
+}
+
 interface FirebaseContextType {
   user: User | null;
   loading: boolean;
@@ -227,6 +242,9 @@ interface FirebaseContextType {
   createFreeSession: (data: Omit<FreeSessionType, 'id' | 'timestamp'>) => Promise<string>;
   updateFreeSession: (id: string, data: Partial<FreeSessionType>) => Promise<void>;
   deleteFreeSession: (id: string) => Promise<void>;
+  // Footer settings functions
+  getFooterSettings: () => Promise<FooterSettings>;
+  updateFooterSettings: (data: Partial<FooterSettings>) => Promise<void>;
 };
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);
@@ -1166,6 +1184,86 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Footer settings functions
+  const getFooterSettings = async (): Promise<FooterSettings> => {
+    try {
+      // First check if there are any existing settings
+      const footerSettingsRef = collection(db, "footer_settings");
+      const snapshot = await getDocs(footerSettingsRef);
+      
+      if (!snapshot.empty) {
+        // Return the first document if it exists
+        const docData = snapshot.docs[0];
+        return {
+          id: docData.id,
+          ...docData.data()
+        } as FooterSettings;
+      }
+      
+      // If no settings exist yet, create default ones
+      const defaultSettings: Omit<FooterSettings, 'id'> = {
+        phone: "+91 96183 61999",
+        email: "contact@rebuild.com",
+        brandName: "Rebuild Women's",
+        socialLinks: {
+          instagram: "https://instagram.com",
+          facebook: "https://facebook.com",
+          whatsapp: "https://api.whatsapp.com/send?phone=919618361999",
+          youtube: "https://youtube.com"
+        }
+      };
+      
+      // Save default settings to Firestore
+      const docRef = await addDoc(footerSettingsRef, defaultSettings);
+      
+      // Return the created settings with id
+      return {
+        id: docRef.id,
+        ...defaultSettings
+      };
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error getting footer settings:", error);
+      }
+      throw error;
+    }
+  };
+  
+  // Implement updateFooterSettings function
+  const updateFooterSettings = async (data: Partial<FooterSettings>): Promise<void> => {
+    try {
+      const footerSettingsRef = collection(db, "footer_settings");
+      const snapshot = await getDocs(footerSettingsRef);
+      
+      if (!snapshot.empty) {
+        // Update existing document
+        const docId = snapshot.docs[0].id;
+        await updateDoc(doc(db, "footer_settings", docId), data);
+      } else if (data.id) {
+        // Update document with provided id
+        await updateDoc(doc(db, "footer_settings", data.id), data);
+      } else {
+        // Create new document if none exists
+        await addDoc(footerSettingsRef, {
+          phone: data.phone || "+91 96183 61999",
+          email: data.email || "contact@rebuild.com",
+          brandName: data.brandName || "Rebuild Women's",
+          socialLinks: data.socialLinks || {
+            instagram: "https://instagram.com",
+            facebook: "https://facebook.com",
+            whatsapp: "https://api.whatsapp.com/send?phone=919618361999",
+            youtube: "https://youtube.com"
+          }
+        });
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Error updating footer settings:", error);
+      }
+      throw error;
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -1213,6 +1311,10 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     createFreeSession,
     updateFreeSession,
     deleteFreeSession,
+
+    // Footer settings functions
+    getFooterSettings,
+    updateFooterSettings
   };
 
   return (
