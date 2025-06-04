@@ -546,6 +546,9 @@ const JoinForm = () => {
                     src={formData.screenshotUrl} 
                     alt="Payment Screenshot" 
                     className="w-full h-auto rounded-lg shadow-md"
+                    loading="lazy"
+                    width="400"
+                    height="300"
                   />
                 </div>
               )}

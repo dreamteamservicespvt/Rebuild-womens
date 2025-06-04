@@ -596,7 +596,7 @@ const BookingsTable = () => {
               <p className="text-white/50 text-xs mb-1">Payment Screenshot</p>
               <div className="relative w-full h-24 bg-gym-gray rounded overflow-hidden">
                 <a href={booking.screenshotUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                  <img src={booking.screenshotUrl} className="w-full h-full object-cover" alt="Payment" />
+                  <img src={booking.screenshotUrl} className="w-full h-full object-cover" alt="Payment" loading="lazy" width="100" height="100" />
                   <div className="absolute bottom-1 right-1">
                     <div className="bg-black/50 text-white p-1 rounded-full">
                       <ExternalLink className="h-4 w-4" />

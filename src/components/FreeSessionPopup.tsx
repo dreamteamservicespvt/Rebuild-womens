@@ -158,6 +158,14 @@ const FreeSessionPopup = ({ onClose }: FreeSessionPopupProps) => {
               onClick={onClose} 
               className="text-white/70 hover:text-white rounded-full p-1 transition-colors"
               aria-label="Close popup"
+              // Add role and onKeyDown for accessibility
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onClose();
+                }
+              }}
             >
               <X size={20} />
             </button>

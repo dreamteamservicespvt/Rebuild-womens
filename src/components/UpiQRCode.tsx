@@ -50,6 +50,9 @@ const UPIQRCode = ({ amount, paymentDescription, onComplete }: UPIQRCodeProps) =
             <img 
               src={qrUrl} 
               alt="UPI QR Code" 
+              loading="lazy"
+              width="224"
+              height="224"
               className="mx-auto w-56 h-56 object-contain" 
             />
           </div>

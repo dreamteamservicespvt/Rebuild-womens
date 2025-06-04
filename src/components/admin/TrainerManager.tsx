@@ -278,6 +278,9 @@ const TrainerManager = () => {
                   <img 
                     src={trainer.image} 
                     alt={trainer.name} 
+                    loading="lazy"
+                    width="300"
+                    height="225"
                     className="w-full h-full object-cover"
                   />
                 ) : (

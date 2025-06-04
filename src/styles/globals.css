@@ -272,6 +272,30 @@ input:-webkit-autofill:active {
     margin: 0;
     border-radius: 0;
   }
+  
+  /* Focus styles for accessibility */
+  a:focus, button:focus, input:focus, select:focus, textarea:focus {
+    outline: 2px solid rgba(255, 228, 52, 0.7);
+    outline-offset: 2px;
+  }
+
+  /* Skip to content link for accessibility */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 1rem;
+    z-index: 999;
+    background: #000;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    transform: translateY(-120%);
+    transition: transform 0.3s;
+  }
+
+  .skip-to-content:focus {
+    left: 1rem;
+    transform: translateY(0);
+  }
 }
 
 /* Attention-drawing pulse animation */

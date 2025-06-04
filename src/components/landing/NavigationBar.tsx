@@ -100,6 +100,8 @@ export default function NavigationBar() {
               <motion.img
                 src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747488784/ukxacg9kkjcewvwgml2u.png"
                 alt="Logo"
+                width="160" 
+                height="160"
                 className="h-10 sm:h-14 md:h-16 w-auto"
                 whileHover={{ scale: 1.05 }}
                 animate={{ 

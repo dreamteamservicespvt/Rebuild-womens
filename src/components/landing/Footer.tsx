@@ -131,6 +131,14 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full flex items-center justify-center bg-gym-gray-dark shadow-sm border border-gym-gray-light text-white/70 hover:text-gym-yellow hover:bg-gym-gray hover:border-gym-yellow/50 hover:shadow-[0_0_10px_rgba(255,243,24,0.3)] transition-all duration-300 transform hover:scale-105"
                   aria-label="Instagram"
+                  // Add tabIndex, role and onKeyDown for keyboard navigation
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      window.open(socialLinks.instagram, '_blank');
+                    }
+                  }}
                 >
                   <Instagram className="h-5 w-5" />
                 </a>

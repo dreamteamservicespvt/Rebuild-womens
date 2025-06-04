@@ -43,7 +43,7 @@
   color: #888;
 }
 
-/* Disable text selection on mobile devices - enhanced version */
+/* Disable text selection on mobile devices - enhanced version but allow for copy-paste in certain elements */
 @media (max-width: 768px) {
   html, body, div, span, p, h1, h2, h3, h4, h5, h6, a, button {
     -webkit-touch-callout: none !important;
@@ -55,13 +55,38 @@
     -webkit-tap-highlight-color: transparent !important;
   }
   
-  /* Prevent selection highlighting */
+  /* Still allow selection for accessibility when needed */
+  .selectable-text,
+  p.address,
+  p.price,
+  p.contact-info,
+  .content-copy,
+  code {
+    -webkit-touch-callout: text !important;
+    -webkit-user-select: text !important;
+    -khtml-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+  }
+  
+  /* Prevent selection highlighting except for selectable elements */
   ::selection {
     background: transparent !important;
   }
   
   ::-moz-selection {
     background: transparent !important;
+  }
+  
+  .selectable-text::selection,
+  p.address::selection,
+  p.price::selection,
+  p.contact-info::selection,
+  .content-copy::selection,
+  code::selection {
+    background: rgba(255, 228, 52, 0.3) !important;
+    color: inherit !important;
   }
   
   /* Allow text selection in input fields and textareas */

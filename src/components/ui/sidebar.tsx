@@ -29,19 +29,23 @@ type SidebarContextType = {
   toggle: () => void
   close: () => void
   open: () => void
+  isMobile: boolean
+  state: "expanded" | "collapsed"
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
+  const isMobile = useIsMobile()
+  const state = isOpen ? "expanded" : "collapsed"
 
   const toggle = () => setIsOpen((prev) => !prev)
   const close = () => setIsOpen(false)
   const open = () => setIsOpen(true)
 
   return (
-    <SidebarContext.Provider value={{ isOpen, toggle, close, open }}>
+    <SidebarContext.Provider value={{ isOpen, toggle, close, open, isMobile, state }}>
       {children}
     </SidebarContext.Provider>
   )
@@ -657,9 +661,7 @@ export {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarProvider,
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
 }

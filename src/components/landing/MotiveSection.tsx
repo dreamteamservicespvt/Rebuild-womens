@@ -28,6 +28,9 @@ const MotiveSection = () => {
               <img 
                 src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1470&auto=format&fit=crop" 
                 alt="Rebuild Women Founder" 
+                loading="lazy"
+                width="600"
+                height="400"
                 className="rounded-lg relative z-10 w-full h-full object-cover border border-gym-yellow/30"
               />
               <div className="absolute -bottom-4 -right-4 bg-gym-yellow/10 backdrop-blur-sm rounded-lg p-4 border border-gym-yellow/20 shadow-lg text-white">

@@ -10,6 +10,8 @@ const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
     aria-label="pagination"
     className={cn("mx-auto flex w-full justify-center", className)}
     {...props}
+    itemScope
+    itemType="https://schema.org/SiteNavigationElement"
   />
 )
 Pagination.displayName = "Pagination"

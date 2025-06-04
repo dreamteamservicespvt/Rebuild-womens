@@ -36,6 +36,7 @@ const AdminHeader = ({ toggleSidebar, isMobileMenuOpen }: AdminHeaderProps) => {
         onClick={toggleSidebar}
         className="p-2 -ml-2 lg:hidden text-white hover:text-gym-yellow focus:outline-none flex items-center justify-center"
         aria-label="Toggle menu"
+        aria-expanded={isMobileMenuOpen ? "true" : "false"}
       >
         {isMobileMenuOpen ? 
           <X size={24} className="text-gym-yellow" /> : 

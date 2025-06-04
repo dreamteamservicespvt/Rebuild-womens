@@ -163,6 +163,7 @@ const LocationSection = () => {
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Rebuild Fitness Location"
+                aria-label="Map showing Rebuild Fitness Gym location in Kakinada"
                 className="transition-transform duration-700 h-full w-full hover:scale-105"
               ></iframe>
 

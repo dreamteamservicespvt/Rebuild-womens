@@ -644,7 +644,9 @@ const JoinFormSection = () => {
                             <img 
                               src={screenshotUrl} 
                               alt="Payment screenshot" 
-                              className="w-full h-full object-contain"
+                              loading="lazy"
+                              width="400"
+                              height="300"
                             />
                           </div>
                         </div>

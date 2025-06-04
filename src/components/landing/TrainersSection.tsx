@@ -89,6 +89,9 @@ const TrainersSection = () => {
                     <img 
                       src={trainer.image} 
                       alt={`${trainer.name} - Rebuild Women Trainer`}
+                      loading="lazy"
+                      width="300"
+                      height="400"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     {/* Overlay gradient */}
