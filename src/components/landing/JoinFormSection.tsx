@@ -325,6 +325,20 @@ const JoinFormSection = () => {
       setConfirmationMessage(confirmMsg);
       setCurrentStep(3); // Move to step 3 (Confirmation)
       
+      // Scroll to the confirmation header after step change
+      setTimeout(() => {
+        const confirmationHeader = document.getElementById('confirmation-success-header');
+        if (confirmationHeader) {
+          confirmationHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          // Fallback to form container if specific element isn't found
+          const formElement = document.getElementById('join-form-container');
+          if (formElement) {
+            formElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }, 100); // Small delay to ensure the DOM is updated
+      
       toast({
         title: "Registration successful!",
         description: "Your booking has been submitted.",
@@ -596,9 +610,16 @@ const JoinFormSection = () => {
                   <h3 className="text-xl font-bold text-white mb-6">Complete Your Payment</h3>
                   
                   <div className="space-y-6">
-                    {/* QR Code component - the payment button is now part of this component */}
+                    {/* QR Code component with enhanced UPI payment description */}
                     <div className="bg-white p-6 rounded-lg">
-                      <UPIQRCode amount={couponValid ? (finalPrice || 0) : (selectedService?.basePrice || 0)} />
+                      <UPIQRCode 
+                        amount={couponValid ? (finalPrice || 0) : (selectedService?.basePrice || 0)}
+                        userName={name}
+                        serviceName={selectedService?.title || "Fitness Program"}
+                        originalPrice={selectedService?.basePrice || 0}
+                        couponCode={couponValid ? couponCode.toUpperCase() : undefined}
+                        paymentDescription={`Payment for ${selectedService?.title || "Fitness Program"} at Rebuild Women`}
+                      />
                     </div>
                     
                     <div className="space-y-3">
@@ -680,8 +701,8 @@ const JoinFormSection = () => {
               
               {currentStep === 3 && (
                 <div className="py-8">
-                  {/* Success animation */}
-                  <div className="flex flex-col items-center mb-8">
+                  {/* Success animation - Added ID for scrolling target */}
+                  <div id="confirmation-success-header" className="flex flex-col items-center mb-8">
                     <div className="relative">
                       <div className="absolute inset-0 bg-gym-yellow/20 rounded-full blur-md animate-pulse"></div>
                       <div className="bg-gym-yellow/30 w-24 h-24 rounded-full flex items-center justify-center relative z-10">
@@ -904,14 +925,184 @@ const JoinFormSection = () => {
                 ) : currentStep === 3 ? (
                   <>
                     <div className="space-y-6">
-                      <div className="bg-gym-yellow/5 border border-gym-yellow/20 rounded-md p-4">
-                        <h4 className="text-gym-yellow font-bold mb-2">Your Registration is Complete!</h4>
-                        <p className="text-white/80 text-sm">
-                          Thank you for registering with Rebuild Women. We're excited to have you join our fitness community!
-                        </p>
+                      {/* Payment Receipt UI - designed like a premium receipt */}
+                      <div className="bg-gym-gray-light/5 border border-gym-yellow/20 rounded-lg overflow-hidden">
+                        {/* Receipt Header */}
+                        <div className="bg-gym-yellow/10 p-4 flex items-center justify-between border-b border-gym-yellow/20">
+                          <div className="flex items-center">
+                            <svg className="w-5 h-5 text-gym-yellow mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h4 className="text-gym-yellow font-bold">Payment Receipt</h4>
+                          </div>
+                          <div className="text-white/70 text-sm">
+                            {new Date().toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric'
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Receipt Content */}
+                        <div className="p-4 space-y-4">
+                          {/* Transaction ID */}
+                          <div className="flex items-center justify-between pb-3 border-b border-gym-gray-light/20">
+                            <span className="text-white/70 text-sm">Transaction ID:</span>
+                            <span className="text-gym-yellow font-mono text-sm">RW-{Math.floor(100000 + Math.random() * 900000)}</span>
+                          </div>
+
+                          {/* Personal Details */}
+                          <div className="pb-3 border-b border-gym-gray-light/20">
+                            <h5 className="text-white/90 text-sm font-medium mb-2 flex items-center">
+                              <svg className="w-4 h-4 mr-1.5 text-gym-yellow/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                              </svg>
+                              Personal Details
+                            </h5>
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div className="flex flex-col">
+                                <span className="text-white/50">Name</span>
+                                <span className="text-white font-medium">{name}</span>
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-white/50">Phone</span>
+                                <span className="text-white font-medium">{phone}</span>
+                              </div>
+                              {email && (
+                                <div className="flex flex-col col-span-2">
+                                  <span className="text-white/50">Email</span>
+                                  <span className="text-white font-medium">{email}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Service Details */}
+                          {selectedService && (
+                            <div className="pb-3 border-b border-gym-gray-light/20">
+                              <h5 className="text-white/90 text-sm font-medium mb-2 flex items-center">
+                                <svg className="w-4 h-4 mr-1.5 text-gym-yellow/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                Service Details
+                              </h5>
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div className="flex flex-col">
+                                  <span className="text-white/50">Program</span>
+                                  <span className="text-white font-medium">{selectedService.title}</span>
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-white/50">Trainer</span>
+                                  <span className="text-white font-medium">{selectedService.trainer}</span>
+                                </div>
+                                {selectedService.timings && (
+                                  <div className="flex flex-col col-span-2">
+                                    <span className="text-white/50">Available Timings</span>
+                                    <span className="text-white/90">{selectedService.timings}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Payment Information */}
+                          <div className="pb-1">
+                            <h5 className="text-white/90 text-sm font-medium mb-2 flex items-center">
+                              <svg className="w-4 h-4 mr-1.5 text-gym-yellow/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                              </svg>
+                              Payment Details
+                            </h5>
+                            
+                            {selectedService && (
+                              <div className="bg-gym-gray-dark/60 rounded-md p-3 space-y-2">
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-white/70">Original Price:</span>
+                                  <span className="text-white">₹{selectedService.basePrice}</span>
+                                </div>
+                                
+                                {couponValid && (
+                                  <div className="flex justify-between text-sm">
+                                    <div className="flex items-center">
+                                      <svg className="w-3.5 h-3.5 text-gym-yellow/80 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                      </svg>
+                                      <span className="text-white/70">Discount ({couponCode.toUpperCase()}):</span>
+                                    </div>
+                                    <span className="text-gym-yellow">-₹{selectedService.basePrice - (finalPrice || 0)}</span>
+                                  </div>
+                                )}
+                                
+                                <div className="flex justify-between pt-2 border-t border-gym-gray-light/20">
+                                  <span className="text-white font-medium">Final Amount:</span>
+                                  <span className="text-gym-yellow font-bold">₹{couponValid ? finalPrice : selectedService.basePrice}</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Paid To */}
+                          <div className="bg-gym-yellow/5 rounded-md p-3 flex items-center justify-between mt-2 border border-gym-yellow/20">
+                            <div className="flex items-center">
+                              <div className="bg-gym-yellow/20 p-1.5 rounded-full mr-3">
+                                <svg className="w-5 h-5 text-gym-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                </svg>
+                              </div>
+                              <div>
+                                <p className="text-white/50 text-xs">Paid to</p>
+                                <p className="text-white font-medium text-sm">Rebuild Women</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-white/50 text-xs">Payment Time</p>
+                              <p className="text-white font-medium text-sm">{new Date().toLocaleTimeString('en-IN', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                              })}</p>
+                            </div>
+                          </div>
+
+                          {/* Payment Screenshot Thumbnail */}
+                          {screenshotUrl && (
+                            <div className="relative group cursor-pointer">
+                              <div className="aspect-video w-full h-24 rounded-md overflow-hidden border border-gym-yellow/20">
+                                <img 
+                                  src={screenshotUrl} 
+                                  alt="Payment confirmation" 
+                                  className="w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-opacity"
+                                />
+                              </div>
+                              <div className="absolute inset-0 flex items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity">
+                                <div className="bg-gym-yellow/30 rounded-full p-1.5">
+                                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Receipt Footer */}
+                        <div className="bg-gym-gray-dark/50 p-3 text-center border-t border-gym-gray-light/10">
+                          <p className="text-white/60 text-xs mb-1">Thank you for choosing Rebuild Women</p>
+                          <p className="text-white/60 text-xs">A copy of this receipt has been sent to your phone</p>
+                        </div>
                       </div>
-                      
-                      <div className="space-y-4">
+
+                      {/* Next Steps Section */}
+                      <div className="space-y-4 mt-5">
+                        <h5 className="text-white text-sm font-medium mb-2 flex items-center">
+                          <svg className="w-4 h-4 mr-1.5 text-gym-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                          Next Steps
+                        </h5>
+                        
                         <div className="flex items-start gap-3">
                           <div className="bg-gym-yellow/20 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                             <span className="text-gym-yellow text-sm">1</span>
@@ -943,12 +1134,28 @@ const JoinFormSection = () => {
                         </div>
                       </div>
                       
-                      <div className="pt-4 border-t border-gym-gray-light">
-                        <p className="text-white/80 text-sm text-center">
-                          Have questions? Contact us at:
-                          <br />
-                          <a href="tel:+919618361999" className="text-gym-yellow hover:underline">+91 96183 61999</a>
-                        </p>
+                      {/* Contact Support */}
+                      <div className="pt-4 border-t border-gym-gray-light/20 flex justify-between items-center">
+                        <a 
+                          href={`https://wa.me/919618361999?text=${encodeURIComponent("Hi, I've just registered for "+selectedService?.title+" at Rebuild Women. My name is "+name+". Could you please confirm my booking?")}`}
+                          target="_blank"
+                          rel="noopener noreferrer" 
+                          className="flex items-center gap-2 text-white/80 hover:text-gym-yellow transition-colors"
+                        >
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                          </svg>
+                          <div className="text-sm">Contact via WhatsApp</div>
+                        </a>
+                        <Button
+                          type="button"
+                          onClick={handleStartOver} 
+                          variant="outline"
+                          size="sm"
+                          className="border-gym-yellow/50 text-gym-yellow hover:bg-gym-yellow/10"
+                        >
+                          Register Another
+                        </Button>
                       </div>
                     </div>
                   </>
